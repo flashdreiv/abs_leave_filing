@@ -3,13 +3,13 @@ import { Redirect } from "react-router-dom";
 
 function RequireAuth({ Component }) {
   const { userInfo } = useSelector((state) => state.userLogin);
-
-  if (userInfo) {
-    if (userInfo.is_superuser) return <Redirect exact to="/" />;
-  } else {
-    return <Redirect exact to="/" />;
+  let user = typeof(userInfo) === "string" ? JSON.parse(userInfo) : userInfo
+  try {
+    return user.is_superuser ? <Redirect to="/admin"/> : <Component/>
+  }catch {
+    return <Redirect to="/"/>
   }
-  return <Component />;
+  
 }
 
 export default RequireAuth;

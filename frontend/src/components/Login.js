@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../actions/userAction";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
+import { Link} from "react-router-dom";
 
 //Material UI
 import Avatar from "@material-ui/core/Avatar";
@@ -67,18 +67,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignInSide({ location, history }) {
+export default function SignInSide({history,location }) {
   const classes = useStyles();
   const [email, setEmail] = useState([]);
   const [password, setPassword] = useState([]);
 
-  // const { userInfo } = useSelector((state) => state.userLogin);
-  // useEffect(() => {
-  //   console.log("success");
-  // }, []);
-
+  const { userInfo } = useSelector((state) => state.userLogin);
+  
+  
   const dispatch = useDispatch();
-
+  
+  useEffect(() => {
+    try{
+      if(!userInfo.is_superuser){
+        history.push("/employee")
+      }else{
+        history.push("/admin")
+      }
+    }catch {
+      history.push("/")
+    }
+    
+  }, [history,userInfo]);
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(login(email, password));

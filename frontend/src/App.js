@@ -4,21 +4,21 @@ import Login from "./components/Login";
 import Admin from "./components/Admin";
 import Signup from "./components/Signup";
 import Employee from "./components/Employee";
-import Unauthorized from "./components/Unauthorized";
+
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import RequireAuth from "./utils/requireAuth";
+import AdminOnly from "./utils/AdminOnly";
 
 function App() {
   return (
     <div className="App">
       <Router>
         <Switch>
-          <Route path="/unauthorized" exact component={Unauthorized} />
           <Route path="/" exact component={Login} />
           <Route
             path="/admin"
             exact
-            component={(props) => <RequireAuth Component={Admin} />}
+            component={(props) => <AdminOnly Component={Admin} />}
           />
           <Route
             path="/employee"

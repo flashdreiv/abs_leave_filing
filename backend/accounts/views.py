@@ -22,7 +22,6 @@ class SignUpView(APIView):
     def post(self, request, format=None):
         data = self.request.data
 
-        name = data["name"]
         email = data["email"]
         password = data["password"]
         password2 = data["password2"]
@@ -35,7 +34,7 @@ class SignUpView(APIView):
                     return Response({"error": "Email already exists"})
                 else:
                     user = User.objects.create_user(
-                        email=email, password=password, name=name
+                        email=email, password=password
                     )
                     user.save()
                     return Response({"success": "User created successfully"})
