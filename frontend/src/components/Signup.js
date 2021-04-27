@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AuthForm from "./AuthForm";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
 import { signup } from "../actions/userAction";
 
 const Signup = ({ history }) => {

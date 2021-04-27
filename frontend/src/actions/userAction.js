@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosApi";
-import axiosSignup from "../axiosApi";
+
 import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
