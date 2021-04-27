@@ -7,25 +7,19 @@ const Signup = ({ history }) => {
   const [email, setEmail] = useState([]);
   const [password, setPassword] = useState([]);
   const [password2, setPassword2] = useState([]);
-  const { userInfo } = useSelector((state) => state.userLogin);
+  const { userInfo } = useSelector((state) => state.userSignup);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     try {
-      if (userInfo) {
+      if (userInfo.success) {
         history.push("/");
       }
-    } catch {
-      history.push("/");
-    }
+    } catch {}
   }, [history, userInfo]);
-
-  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(email);
-    console.log(password);
-    console.log(password2);
     dispatch(signup(email, password, password2));
   };
 

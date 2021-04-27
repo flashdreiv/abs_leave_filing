@@ -1,6 +1,4 @@
-import { React, useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { React } from "react";
 import { Link } from "react-router-dom";
 
 //Material UI
@@ -65,9 +63,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AuthForm({ handleSubmit, formTitle, se }) {
+export default function AuthForm({
+  handleSubmit,
+  formTitle,
+  setEmail,
+  setPassword,
+  setPassword2,
+}) {
   const classes = useStyles();
-  let history = useHistory();
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -119,10 +122,10 @@ export default function AuthForm({ handleSubmit, formTitle, se }) {
                 name="password"
                 label="Confirm Password"
                 type="password"
-                id="password"
+                id="password2"
                 autoComplete="current-password"
                 onChange={(e) => {
-                  setPassword(e.target.value);
+                  setPassword2(e.target.value);
                 }}
               />
             ) : (
@@ -156,7 +159,7 @@ export default function AuthForm({ handleSubmit, formTitle, se }) {
                 </Grid> */}
                 <Grid item>
                   <Link to="/" variant="body2">
-                    {"Already have an account? Sign Up"}
+                    {"Already have an account? Sign in"}
                   </Link>
                 </Grid>
               </Grid>
@@ -168,8 +171,9 @@ export default function AuthForm({ handleSubmit, formTitle, se }) {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link to="/signup" variant="body2"></Link>
-                  Don't have an account? Sign up
+                  <Link to="/signup" variant="body2">
+                    Don't have an account? Sign up
+                  </Link>
                 </Grid>
               </Grid>
             )}

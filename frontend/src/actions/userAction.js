@@ -1,4 +1,4 @@
-import axiosInstance from "../axiosApi";
+import axiosActions from "../axiosApi";
 
 import {
   USER_LOGIN_REQUEST,
@@ -15,11 +15,11 @@ export const login = (email, password) => async (dispatch) => {
       type: USER_LOGIN_REQUEST,
     });
 
-    const { data } = await axiosInstance.post("auth/login", {
+    const { data } = await axiosActions[0].post("auth/login", {
       email: email,
       password: password,
     });
-    axiosInstance.defaults.headers["Authorization"] = "JWT " + data.access;
+    axiosActions[0].defaults.headers["Authorization"] = "JWT " + data.access;
     localStorage.setItem("userInfo", JSON.stringify(data));
 
     dispatch({
@@ -44,19 +44,7 @@ export const signup = (email, password, password2) => async (dispatch) => {
     });
 
     let signupInfo = { email: email, password: password, password2: password2 };
-
-    let data = fetch("http://localhost:8000/api/accounts/signup", {
-      headers: {
-        "Content-type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify(signupInfo),
-    })
-      .then((data) => data.json())
-      .then((data) => {
-        console.log(data);
-        return data;
-      });
+    const { data } = await axiosActions[1].post("accounts/signup", signupInfo);
 
     dispatch({
       type: USER_SIGNUP_SUCCESS,
