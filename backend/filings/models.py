@@ -24,13 +24,16 @@ class LeaveType(models.Model):
 
 
 class Filing(models.Model):
-    day_type_choice = ((1, "First Half"), (2, "Second Half"), (3, "Whole day"))
+    day_type_choice = (("1", "First Half"), ("2", "Second Half"), ("3", "Whole day"))
     user = models.ForeignKey(
-        UserAccount, on_delete=models.CASCADE, null=True, blank=True
+        UserAccount,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
     date_filed = models.DateTimeField(auto_now_add=True)
-    leave_date_from = models.DateTimeField(null=True, blank=True)
-    leave_date_to = models.DateTimeField(null=True, blank=True)
+    leave_date_from = models.DateField(null=True, blank=True, unique=True)
+    leave_date_to = models.DateField(null=True, blank=True, unique=True)
     day_type = models.CharField(choices=day_type_choice, max_length=50, default=3)
     leave_type = models.ForeignKey(
         LeaveType, on_delete=models.SET_NULL, null=True, blank=True
@@ -38,4 +41,4 @@ class Filing(models.Model):
     remarks = models.CharField(max_length=300)
 
     def __str__(self):
-        self.leave_type
+        return self.user.email
