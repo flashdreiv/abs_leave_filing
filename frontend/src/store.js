@@ -6,6 +6,7 @@ import { userLoginReducer, userSignupReducer } from "./reducers/userReducers";
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userSignup: userSignupReducer,
+  userLogout: userLoginReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo");

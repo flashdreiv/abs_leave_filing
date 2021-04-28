@@ -7,6 +7,7 @@ import {
   USER_SIGNUP_REQUEST,
   USER_SIGNUP_SUCCESS,
   USER_SIGNUP_FAIL,
+  USER_LOGOUT,
 } from "../constants/userConstants";
 
 export const login = (email, password) => async (dispatch) => {
@@ -59,4 +60,20 @@ export const signup = (email, password, password2) => async (dispatch) => {
           : error.message,
     });
   }
+};
+
+export const logout = () => async (dispatch) => {
+  try {
+    const logoutData = JSON.parse(localStorage.getItem("userInfo"));
+    axiosActions[1].defaults.headers["Authorization"] =
+      "JWT " + logoutData.access;
+
+    axiosActions[1].post("accounts/logout", {
+      refresh: logoutData.refresh,
+    });
+    localStorage.removeItem("userInfo");
+    dispatch({
+      type: USER_LOGOUT,
+    });
+  } catch {}
 };
