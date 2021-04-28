@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+
 User = get_user_model()
 
 # Create your views here.
@@ -34,18 +35,17 @@ class SignUpView(APIView):
                 if len(password) < 6:
                     return Response({"error": "Email already exists"})
                 else:
-                    user = User.objects.create_user(
-                        email=email, password=password
-                    )
+                    user = User.objects.create_user(email=email, password=password)
                     user.save()
                     return Response({"success": "User created successfully"})
         else:
             return Response({"error": "Password does not match"})
 
+
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self,request):
+    def post(self, request):
         try:
             refresh_token = request.data["refresh"]
             token = RefreshToken(refresh_token)
@@ -54,4 +54,3 @@ class LogoutView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
