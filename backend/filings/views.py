@@ -16,6 +16,7 @@ class FilingView(APIView):
     def post(self, request):
         data = self.request.data
 
+        print(self.request.META["HTTP_AUTHORIZATION"])
         user_id = data["user_id"]
         leave_type = data["leave_type"]
         day_type = data["day_type"]
