@@ -5,6 +5,7 @@ from .serializers import FilingSerializer
 from accounts.models import UserAccount
 from .models import Filing, LeaveType
 from rest_framework.response import Response
+from rest_framework import status
 
 # Create your views here.
 
@@ -16,18 +17,16 @@ class FilingView(APIView):
     def post(self, request):
         data = self.request.data
 
-        print(self.request.META["HTTP_AUTHORIZATION"])
-        user_id = data["user_id"]
+        user_id = int(request.user.id)
         leave_type = data["leave_type"]
         day_type = data["day_type"]
         leave_date_from = data["leave_date_from"]
         leave_date_to = data["leave_date_to"]
         remarks = data["remarks"]
 
-        user = UserAccount.objects.get(pk=user_id)
-        leave_type = LeaveType.objects.get(leave_type=leave_type)
-
         try:
+            user = UserAccount.objects.get(pk=user_id)
+            leave_type = LeaveType.objects.get(leave_type=leave_type)
             Filing.objects.create(
                 user=user,
                 leave_type=leave_type,
