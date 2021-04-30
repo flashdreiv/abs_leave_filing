@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fileLeave } from "../actions/LeaveFilingAction";
+import { format } from "date-fns";
 //Material UI
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -21,13 +22,13 @@ import { Typography } from "@material-ui/core";
 
 const CardModal = () => {
   const [open, setOpen] = React.useState(false);
-
+  let today = format(new Date(), "yyyy-MM-dd");
   const dispatch = useDispatch();
   const { filingInfo } = useSelector((state) => state.leaveFile);
   const [leaveType, setLeaveType] = useState("");
   const [dayType, setdayType] = useState("");
-  const [leaveDateFrom, setleaveDateFrom] = useState(new Date());
-  const [leaveDateTo, setleaveDateTo] = useState(new Date());
+  const [leaveDateFrom, setleaveDateFrom] = useState(today);
+  const [leaveDateTo, setleaveDateTo] = useState(today);
   const [remarks, setRemarks] = useState("");
 
   const handleClickOpen = () => {
@@ -45,8 +46,11 @@ const CardModal = () => {
       fileLeave(leaveType, dayType, leaveDateFrom, leaveDateTo, remarks)
     );
 
-    console.log(filingInfo);
-    console.log(leaveType);
+    if (filingInfo.hasOwnProperty("error")) {
+      console.log(filingInfo.error);
+    } else {
+      console.log(filingInfo.success);
+    }
   };
 
   return (
@@ -94,12 +98,15 @@ const CardModal = () => {
               >
                 <MenuItem value={1}>First Half</MenuItem>
                 <MenuItem value={2}>Second Half</MenuItem>
+                <MenuItem value={3}>Whole Day</MenuItem>
               </Select>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <Typography style={{ marginTop: 10 }}>
                   Leave Credits: {0}
                 </Typography>
                 <KeyboardDatePicker
+                  minDate={today}
+                  autoOk={true}
                   disableToolbar
                   variant="inline"
                   format="yyyy-MM-dd"
@@ -108,12 +115,14 @@ const CardModal = () => {
                   label="Date From"
                   required
                   value={leaveDateFrom}
-                  onChange={(e) => setleaveDateFrom(e)}
+                  onChange={(e) => setleaveDateFrom(format(e, "yyyy-MM-dd"))}
                   KeyboardButtonProps={{
                     "aria-label": "change date",
                   }}
                 />
                 <KeyboardDatePicker
+                  minDate={today}
+                  autoOk={true}
                   disableToolbar
                   variant="inline"
                   format="yyyy-MM-dd"
@@ -122,7 +131,7 @@ const CardModal = () => {
                   label="Date To"
                   required
                   value={leaveDateTo}
-                  onChange={(e) => setleaveDateTo(e)}
+                  onChange={(e) => setleaveDateTo(format(e, "yyyy-MM-dd"))}
                   KeyboardButtonProps={{
                     "aria-label": "change date",
                   }}
