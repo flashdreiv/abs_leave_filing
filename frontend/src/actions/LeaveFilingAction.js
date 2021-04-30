@@ -18,14 +18,14 @@ export const fileLeave = (
       type: USER_FILING_REQUEST,
     });
 
-    let signupInfo = {
+    let filingInfo = {
       leave_type,
       day_type,
       leave_date_from,
       leave_date_to,
       remarks,
     };
-    const { data } = await axiosActions[0].post("filings/", signupInfo);
+    const { data } = await axiosActions[0].post("filings/", filingInfo);
 
     dispatch({
       type: USER_FILING_SUCCESS,

@@ -26,7 +26,7 @@ class FilingView(APIView):
 
         try:
             user = UserAccount.objects.get(pk=user_id)
-            leave_type = LeaveType.objects.get(leave_type=leave_type)
+            leave_type = LeaveType.objects.get(pk=leave_type)
             Filing.objects.create(
                 user=user,
                 leave_type=leave_type,

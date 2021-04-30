@@ -40,11 +40,13 @@ const CardModal = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     dispatch(
       fileLeave(leaveType, dayType, leaveDateFrom, leaveDateTo, remarks)
     );
+
     console.log(filingInfo);
-    setOpen(false);
+    console.log(leaveType);
   };
 
   return (
@@ -100,13 +102,13 @@ const CardModal = () => {
                 <KeyboardDatePicker
                   disableToolbar
                   variant="inline"
-                  format="MM/dd/yyyy"
+                  format="yyyy-MM-dd"
                   margin="normal"
                   id="Date From"
                   label="Date From"
                   required
                   value={leaveDateFrom}
-                  onChange={(e) => setleaveDateFrom(e.target.value)}
+                  onChange={(e) => setleaveDateFrom(e)}
                   KeyboardButtonProps={{
                     "aria-label": "change date",
                   }}
@@ -114,13 +116,13 @@ const CardModal = () => {
                 <KeyboardDatePicker
                   disableToolbar
                   variant="inline"
-                  format="MM/dd/yyyy"
+                  format="yyyy-MM-dd"
                   margin="normal"
                   id="Date To"
                   label="Date To"
                   required
                   value={leaveDateTo}
-                  onChange={(e) => setleaveDateTo(e.target.value)}
+                  onChange={(e) => setleaveDateTo(e)}
                   KeyboardButtonProps={{
                     "aria-label": "change date",
                   }}
