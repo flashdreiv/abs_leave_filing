@@ -19,14 +19,17 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { Typography } from "@material-ui/core";
+import AddIcon from "@material-ui/icons/Add";
+import Fab from "@material-ui/core/Fab";
 
 const CardModal = () => {
   const [open, setOpen] = React.useState(false);
   let today = format(new Date(), "yyyy-MM-dd");
+
   const dispatch = useDispatch();
-  const { filingInfo } = useSelector((state) => state.leaveFile);
-  const [leaveType, setLeaveType] = useState("");
-  const [dayType, setdayType] = useState("");
+
+  const [leaveType, setLeaveType] = useState(11);
+  const [dayType, setdayType] = useState(3);
   const [leaveDateFrom, setleaveDateFrom] = useState(today);
   const [leaveDateTo, setleaveDateTo] = useState(today);
   const [remarks, setRemarks] = useState("");
@@ -45,19 +48,23 @@ const CardModal = () => {
     dispatch(
       fileLeave(leaveType, dayType, leaveDateFrom, leaveDateTo, remarks)
     );
+    setOpen(false);
+  };
 
-    if (filingInfo.hasOwnProperty("error")) {
-      console.log(filingInfo.error);
-    } else {
-      console.log(filingInfo.success);
-    }
+  const fabStyle = {
+    margin: 0,
+    top: "auto",
+    right: 20,
+    bottom: 20,
+    left: "auto",
+    position: "fixed",
   };
 
   return (
     <div>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Add New
-      </Button>
+      <Fab color="primary" onClick={handleClickOpen} style={fabStyle}>
+        <AddIcon />
+      </Fab>
       <Dialog
         open={open}
         onClose={handleClose}

@@ -1,4 +1,6 @@
 import React from "react";
+import LeaveCard from "./LeaveCard";
+//Material UI
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -166,6 +168,7 @@ export default function Dashboard({ history }) {
         <div className={classes.drawerHeader} />
         {/* <Typography>There's nothing to show here</Typography> */}
         <CardModal />
+        <LeaveCard />
       </main>
     </div>
   );

@@ -2,6 +2,7 @@ import {
   USER_FILING_REQUEST,
   USER_FILING_SUCCESS,
   USER_FILING_FAIL,
+  USER_FILING_LIST,
 } from "../constants/LeaveFilingConstants";
 
 export const LeaveFilingReducer = (state = {}, action) => {
@@ -11,6 +12,9 @@ export const LeaveFilingReducer = (state = {}, action) => {
 
     case USER_FILING_SUCCESS:
       return { loading: false, filingInfo: action.payload };
+
+    case USER_FILING_LIST:
+      return { loading: false, userFilingList: action.payload };
 
     case USER_FILING_FAIL:
       return { loading: false, error: action.payload };

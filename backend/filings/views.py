@@ -14,6 +14,16 @@ class FilingView(APIView):
     serializer_class = FilingSerializer
     permission_classes = (IsAuthenticated,)
 
+    def get(self, request, format=None):
+        try:
+            user = UserAccount.objects.get(pk=int(request.user.id))
+            queryset = Filing.objects.filter(user=user)
+            filings = FilingSerializer(queryset, many=True)
+        except BaseException as e:
+            return Response({"error": e})
+
+        return Response(filings.data)
+
     def post(self, request):
         data = self.request.data
 
