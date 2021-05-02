@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { fileLeave } from "../actions/LeaveFilingAction";
 import { format } from "date-fns";
+import axiosActions from "../axiosApi";
 //Material UI
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -23,16 +24,37 @@ import AddIcon from "@material-ui/icons/Add";
 import Fab from "@material-ui/core/Fab";
 
 const CardModal = () => {
+  const fabStyle = {
+    margin: 0,
+    top: "auto",
+    right: 20,
+    bottom: 20,
+    left: "auto",
+    position: "fixed",
+  };
+
   const [open, setOpen] = React.useState(false);
   let today = format(new Date(), "yyyy-MM-dd");
 
   const dispatch = useDispatch();
 
-  const [leaveType, setLeaveType] = useState(11);
   const [dayType, setdayType] = useState(3);
+  const [leaveTypes, setLeaveTypes] = useState([]);
+  const [leave, setLeave] = useState();
+  const [leaveCredit, setLeaveCredit] = useState("0");
   const [leaveDateFrom, setleaveDateFrom] = useState(today);
   const [leaveDateTo, setleaveDateTo] = useState(today);
   const [remarks, setRemarks] = useState("");
+
+  useEffect(() => {
+    async function fetchData() {
+      const { data } = await axiosActions[0].get("filings/leaves/");
+      setLeaveTypes(data);
+      setLeave(data[0].id);
+    }
+
+    fetchData();
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -45,19 +67,12 @@ const CardModal = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(
-      fileLeave(leaveType, dayType, leaveDateFrom, leaveDateTo, remarks)
-    );
+    dispatch(fileLeave(leave, dayType, leaveDateFrom, leaveDateTo, remarks));
     setOpen(false);
   };
 
-  const fabStyle = {
-    margin: 0,
-    top: "auto",
-    right: 20,
-    bottom: 20,
-    left: "auto",
-    position: "fixed",
+  const handleChange = (e) => {
+    setLeave(e.target.value);
   };
 
   return (
@@ -86,12 +101,17 @@ const CardModal = () => {
                 labelId="leave-type-label"
                 required
                 id="leaveType"
-                value={leaveType}
-                onChange={(e) => setLeaveType(e.target.value)}
+                value={leave}
+                onChange={handleChange}
               >
-                <MenuItem value={10}>Sick Leave</MenuItem>
-                <MenuItem value={11}>Service Incentive Leave</MenuItem>
-                <MenuItem value={9}>Work From Home</MenuItem>
+                {leaveTypes &&
+                  leaveTypes.map((type) => {
+                    return (
+                      <MenuItem key={type.id} value={type.id}>
+                        {type.leave_type}
+                      </MenuItem>
+                    );
+                  })}
               </Select>
             </FormControl>
             <FormControl style={{ marginTop: 10 }}>
@@ -107,10 +127,18 @@ const CardModal = () => {
                 <MenuItem value={2}>Second Half</MenuItem>
                 <MenuItem value={3}>Whole Day</MenuItem>
               </Select>
+              {leaveTypes &&
+                leaveTypes.map((type) => {
+                  return type.id === leave ? (
+                    <Typography key={type.id} style={{ marginTop: 10 }}>
+                      Leave Credits: {type.leave_credits}
+                    </Typography>
+                  ) : (
+                    ""
+                  );
+                })}
+
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <Typography style={{ marginTop: 10 }}>
-                  Leave Credits: {0}
-                </Typography>
                 <KeyboardDatePicker
                   minDate={today}
                   autoOk={true}

@@ -17,7 +17,7 @@ class LeaveType(models.Model):
     leave_type = models.CharField(
         choices=leave_type_choices, max_length=250, blank=True, null=True
     )
-    leave_credits = models.IntegerField(default=0)
+    leave_credits = models.DecimalField(default=0, max_digits=3, decimal_places=1)
 
     def __str__(self):
         return self.get_leave_type_display()

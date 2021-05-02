@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listLeave } from "../actions/LeaveFilingAction";
+
+import CardModal from "./CardModal";
+
 //Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -24,7 +27,7 @@ const useStyles = makeStyles({
   },
 });
 
-const LeaveCard = () => {
+const LeaveCard = ({ CardModal }) => {
   const classes = useStyles();
   const { userFilingList } = useSelector((state) => state.leaveFile);
   const { filingInfo } = useSelector((state) => state.leaveFile);
@@ -33,10 +36,11 @@ const LeaveCard = () => {
 
   useEffect(() => {
     dispatch(listLeave());
-  }, [filingInfo]);
+  }, [filingInfo, dispatch]);
 
   return (
     <div className={classes.displayCard}>
+      <CardModal />
       {userFilingList &&
         userFilingList.map((filing) => {
           return (
@@ -44,7 +48,6 @@ const LeaveCard = () => {
               <Card className={classes.leaveCard}>
                 <CardContent className={classes.cardContent}>
                   <Typography>Leave Type:</Typography>
-
                   <Typography color="textSecondary">
                     {filing.leave_type}
                   </Typography>
@@ -66,6 +69,9 @@ const LeaveCard = () => {
                 <CardActions>
                   <Button size="small" variant="contained" color="primary">
                     Edit
+                  </Button>
+                  <Button size="small" variant="contained" color="primary">
+                    Delete
                   </Button>
                 </CardActions>
               </Card>
