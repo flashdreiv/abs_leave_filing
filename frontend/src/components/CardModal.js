@@ -41,7 +41,6 @@ const CardModal = () => {
   const [dayType, setdayType] = useState(3);
   const [leaveTypes, setLeaveTypes] = useState([]);
   const [leave, setLeave] = useState();
-  const [leaveCredit, setLeaveCredit] = useState("0");
   const [leaveDateFrom, setleaveDateFrom] = useState(today);
   const [leaveDateTo, setleaveDateTo] = useState(today);
   const [remarks, setRemarks] = useState("");
