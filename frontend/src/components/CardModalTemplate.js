@@ -20,8 +20,20 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { Typography } from "@material-ui/core";
+import AddIcon from "@material-ui/icons/Add";
+import Fab from "@material-ui/core/Fab";
 
-const CardModal = ({ modalPop, handleClose }) => {
+const CardModalTemplate = () => {
+  const fabStyle = {
+    margin: 0,
+    top: "auto",
+    right: 20,
+    bottom: 20,
+    left: "auto",
+    position: "fixed",
+  };
+
+  const [open, setOpen] = React.useState(false);
   let today = format(new Date(), "yyyy-MM-dd");
 
   const dispatch = useDispatch();
@@ -43,11 +55,19 @@ const CardModal = ({ modalPop, handleClose }) => {
     fetchData();
   }, []);
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     dispatch(fileLeave(leave, dayType, leaveDateFrom, leaveDateTo, remarks));
-    // setOpen(false);
+    setOpen(false);
   };
 
   const handleChange = (e) => {
@@ -56,8 +76,11 @@ const CardModal = ({ modalPop, handleClose }) => {
 
   return (
     <div>
+      <Fab color="primary" onClick={handleClickOpen} style={fabStyle}>
+        <AddIcon />
+      </Fab>
       <Dialog
-        open={modalPop}
+        open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
@@ -173,4 +196,4 @@ const CardModal = ({ modalPop, handleClose }) => {
   );
 };
 
-export default CardModal;
+export default CardModalTemplate;

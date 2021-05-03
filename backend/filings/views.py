@@ -42,11 +42,19 @@ class FilingView(APIView):
     def delete(self, request, pk, format=None):
         try:
             user_id = int(request.user.id)
-            user = UserAccount.objects.get(pk=user_id)
-            Filing.objects.get(user=user, pk=pk).delete()
+            filing = Filing.objects.get(user__id=user_id, pk=pk)
+            if filing.status == "1":
+                if filing.day_type == "1" or filing.day_type == "2":
+                    filing.leave_type.leave_credits = F("leave_credits") + 0.5
+                elif filing.day_type == "3":
+                    filing.leave_type.leave_credits = F("leave_credits") + 1
+                filing.leave_type.save()
+                filing.delete()
+                return Response({"Success": "delete success"})
+            else:
+                return Response({"error": "You can't delete approved request"})
         except BaseException as e:
             return Response({"error": e})
-        return Response({"Success": "delete success"})
 
     def post(self, request):
         data = self.request.data
@@ -59,10 +67,9 @@ class FilingView(APIView):
         remarks = data["remarks"]
 
         try:
-            user = UserAccount.objects.get(pk=user_id)
-            leave_type = LeaveType.objects.get(user=user, pk=leave_type)
+            leave_type = LeaveType.objects.get(user__id=user_id, pk=leave_type)
             Filing.objects.create(
-                user=user,
+                user=request.user,
                 leave_type=leave_type,
                 day_type=day_type,
                 remarks=remarks,
@@ -74,7 +81,6 @@ class FilingView(APIView):
                     {"error": "You don't have sufficient leave credits fro that type"}
                 )
             else:
-                print(day_type)
                 if day_type == 1 or day_type == 2:
                     leave_type.leave_credits = F("leave_credits") - 0.5
 
