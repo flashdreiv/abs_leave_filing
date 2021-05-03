@@ -3,5 +3,6 @@ from .views import FilingView, LeaveTypeView
 
 urlpatterns = [
     path("", FilingView.as_view(), name="list-filing"),
+    path("<int:pk>", FilingView.as_view(), name="list-filing"),
     path("leaves/", LeaveTypeView.as_view(), name="list-leave-types"),
 ]
