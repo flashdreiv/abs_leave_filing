@@ -6,6 +6,7 @@ import {
   USER_EDIT_FILING_REQUEST,
   USER_EDIT_FILING_SUCCESS,
   USER_EDIT_FILING_FAIL,
+  USER_DELETE_FILING,
 } from "../constants/LeaveFilingConstants";
 
 export const LeaveFilingReducer = (state = {}, action) => {
@@ -18,6 +19,9 @@ export const LeaveFilingReducer = (state = {}, action) => {
 
     case USER_FILING_LIST:
       return { loading: false, userFilingList: action.payload };
+
+    case USER_DELETE_FILING:
+      return { loading: false, filingInfo: action.payload };
 
     case USER_FILING_FAIL:
       return { loading: false, error: action.payload };

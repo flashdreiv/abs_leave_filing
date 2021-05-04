@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { fileLeave } from "../actions/LeaveFilingAction";
+import { fileLeave, editLeave } from "../actions/LeaveFilingAction";
 import { format } from "date-fns";
 import axiosActions from "../axiosApi";
 //Material UI
@@ -21,12 +21,12 @@ import {
 } from "@material-ui/pickers";
 import { Typography } from "@material-ui/core";
 
-const CardModal = ({ modalPop, handleClose }) => {
+const CardModal = ({ modalPop, handleClose, filing, BtnAction }) => {
   let today = format(new Date(), "yyyy-MM-dd");
 
   const dispatch = useDispatch();
 
-  const [dayType, setdayType] = useState(3);
+  const [dayType, setdayType] = useState("Whole day");
   const [leaveTypes, setLeaveTypes] = useState([]);
   const [leave, setLeave] = useState();
   const [leaveDateFrom, setleaveDateFrom] = useState(today);
@@ -39,15 +39,35 @@ const CardModal = ({ modalPop, handleClose }) => {
       setLeaveTypes(data);
       setLeave(data[0].id);
     }
+    //Set default value when editing
+    if (BtnAction === "edit") {
+      setdayType(filing.day_type);
+      setLeave(filing.leave_type);
+      setleaveDateFrom(filing.leave_date_from);
+      setleaveDateTo(filing.leave_date_to);
+      setRemarks(filing.remarks);
+    }
 
     fetchData();
-  }, []);
+  }, [filing, BtnAction]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(fileLeave(leave, dayType, leaveDateFrom, leaveDateTo, remarks));
-    // setOpen(false);
+    BtnAction === "add"
+      ? dispatch(fileLeave(leave, dayType, leaveDateFrom, leaveDateTo, remarks))
+      : dispatch(
+          editLeave(
+            filing.id,
+            leave,
+            dayType,
+            leaveDateFrom,
+            leaveDateTo,
+            remarks
+          )
+        );
+
+    handleClose();
   };
 
   const handleChange = (e) => {
@@ -99,9 +119,9 @@ const CardModal = ({ modalPop, handleClose }) => {
                 value={dayType}
                 onChange={(e) => setdayType(e.target.value)}
               >
-                <MenuItem value={1}>First Half</MenuItem>
-                <MenuItem value={2}>Second Half</MenuItem>
-                <MenuItem value={3}>Whole Day</MenuItem>
+                <MenuItem value={"First Half"}>First Half</MenuItem>
+                <MenuItem value={"Second Half"}>Second Half</MenuItem>
+                <MenuItem value={"Whole day"}>Whole Day</MenuItem>
               </Select>
               {leaveTypes &&
                 leaveTypes.map((type) => {
@@ -161,7 +181,7 @@ const CardModal = ({ modalPop, handleClose }) => {
                 <Button onClick={handleClose} color="primary">
                   Cancel
                 </Button>
-                <Button type="submit" color="primary">
+                <Button onClick={handleClose} type="submit" color="primary">
                   Save
                 </Button>
               </DialogActions>

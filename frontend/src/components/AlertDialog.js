@@ -51,7 +51,7 @@ export default function AlertDialog({
           </Button>
           <Button
             onClick={() => {
-              BtnAction.delete(Params.id);
+              BtnAction(Params.id);
               handleClose();
             }}
             color="primary"

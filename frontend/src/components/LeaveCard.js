@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { listLeave, editLeave } from "../actions/LeaveFilingAction";
+import {
+  listLeave,
+  editLeave,
+  deleteLeave,
+} from "../actions/LeaveFilingAction";
 import AlertDialog from "./AlertDialog";
-import axiosActions from "../axiosApi";
+
 //Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -41,6 +45,9 @@ const LeaveCard = ({ CardModal }) => {
   const { userFilingList } = useSelector((state) => state.leaveFile);
   const { filingInfo } = useSelector((state) => state.leaveFile);
 
+  //Default modal value for editng
+  const [filing, setFiling] = useState("");
+
   //Modal State
   const [open, setOpen] = useState(false);
   //Edit or Add State
@@ -57,9 +64,9 @@ const LeaveCard = ({ CardModal }) => {
   const handleClose = () => {
     setOpen(false);
   };
+
   //Edit Function for Filing
   const editButtonHandle = (
-    e,
     id,
     leave_type,
     day_type,
@@ -81,13 +88,7 @@ const LeaveCard = ({ CardModal }) => {
   };
   //Delete Function for Filing
   const deleteButtonHandle = (id) => {
-    axiosActions[0].delete(`filings/${id}`);
-    console.log(id);
-  };
-  // Object filing functions merge edit and delete function
-  const leaveFilingFunctions = {
-    edit: editButtonHandle,
-    delete: deleteButtonHandle,
+    dispatch(deleteLeave(id));
   };
 
   useEffect(() => {
@@ -99,12 +100,14 @@ const LeaveCard = ({ CardModal }) => {
       <CardModal
         handleClose={handleClose}
         modalPop={open}
-        saveAction={leaveFilingFunctions}
+        saveAction={editButtonHandle}
+        filing={filing}
+        BtnAction={AddorEdit}
       />
       <Fab
         onClick={() => {
           handleClickOpen();
-          setAddorEdit("Add");
+          setAddorEdit("add");
         }}
         color="primary"
         className={classes.fabStyle}
@@ -138,7 +141,12 @@ const LeaveCard = ({ CardModal }) => {
                 </CardContent>
                 <CardActions>
                   <Button
-                    onClick={handleClickOpen}
+                    onClick={() => {
+                      handleClickOpen();
+                      setAddorEdit("edit");
+                      setFiling(userFilingList.find((x) => x.id === filing.id));
+                      console.log(filing);
+                    }}
                     size="small"
                     variant="contained"
                     color="primary"
@@ -150,7 +158,7 @@ const LeaveCard = ({ CardModal }) => {
                     DialogText="Are you sure you want to delete your filing?"
                     Title="Delete Filing"
                     BtnText="Delete"
-                    BtnAction={leaveFilingFunctions}
+                    BtnAction={deleteButtonHandle}
                     Params={{
                       id: filing.id,
                     }}

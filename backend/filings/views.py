@@ -26,18 +26,26 @@ class FilingView(APIView):
         return Response(filings.data)
 
     def put(self, request, pk, format=None):
-        # data = self.request.data
+        data = self.request.data
 
-        # user_id = int(request.user.id)
-        # leave_type = data["leave_type"]
-        # day_type = data["day_type"]
-        # leave_date_from = data["leave_date_from"]
-        # leave_date_to = data["leave_date_to"]
-        # remarks = data["remarks"]
+        try:
 
-        filing = Filing.objects.get(pk=pk)
-        filing = FilingSerializer(filing)
-        return Response(filing.data)
+            user_id = int(request.user.id)
+            filing = Filing.objects.get(pk=pk, user__id=user_id)
+            if filing.status == "1":
+                filing.leave_type__id = data["leave_type"]
+                print(type(data["leave_type"]))
+                filing.day_type = data["day_type"]
+                filing.leave_date_from = data["leave_date_from"]
+                filing.leave_date_to = data["leave_date_to"]
+                filing.remarks = data["remarks"]
+                filing.save()
+                return Response({"success": "Update successful"})
+            else:
+                return Response({"error": "Filing Can't be updated"})
+
+        except BaseException as e:
+            return Response({"error": e})
 
     def delete(self, request, pk, format=None):
         try:

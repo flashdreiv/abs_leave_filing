@@ -5,7 +5,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { useDispatch } from "react-redux";
 import { logout } from "../actions/userAction";
-import { Redirect } from "react-router-dom";
 
 export default function AccountMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
