@@ -32,9 +32,9 @@ class FilingView(APIView):
 
             user_id = int(request.user.id)
             filing = Filing.objects.get(pk=pk, user__id=user_id)
+            leave_type = LeaveType.objects.get(pk=data["leave_type"])
             if filing.status == "1":
-                filing.leave_type__id = data["leave_type"]
-                print(type(data["leave_type"]))
+                filing.leave_type = leave_type
                 filing.day_type = data["day_type"]
                 filing.leave_date_from = data["leave_date_from"]
                 filing.leave_date_to = data["leave_date_to"]
@@ -86,14 +86,14 @@ class FilingView(APIView):
             )
             if leave_type.leave_credits < 1:
                 return Response(
-                    {"error": "You don't have sufficient leave credits fro that type"}
+                    {"error": "You don't have sufficient leave credits for that type"}
                 )
-            else:
-                if day_type == 1 or day_type == 2:
-                    leave_type.leave_credits = F("leave_credits") - 0.5
+            # else:
+            #     if day_type == 1 or day_type == 2:
+            #         leave_type.leave_credits = F("leave_credits") - 0.5
 
-                elif day_type == 3:
-                    leave_type.leave_credits = F("leave_credits") - 1
+            #     elif day_type == 3:
+            #         leave_type.leave_credits = F("leave_credits") - 1
 
             leave_type.save()
             return Response({"success": "Leave filing creation created"})

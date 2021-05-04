@@ -41,3 +41,12 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class Department(models.Model):
+    staff = models.ManyToManyField(UserAccount)
+    department = models.CharField(max_length=100)
+    department_head = models.EmailField()
+
+    def __str__(self):
+        return self.department

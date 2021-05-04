@@ -168,7 +168,7 @@ export default function Dashboard({ history }) {
       >
         <div className={classes.drawerHeader} />
         {/* <Typography>There's nothing to show here</Typography> */}
-        <LeaveCard CardModal={CardModal} />
+        {/* <LeaveCard CardModal={CardModal} /> */}
       </main>
     </div>
   );

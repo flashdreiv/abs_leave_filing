@@ -21,6 +21,7 @@ const useStyles = makeStyles({
   displayCard: {
     display: "flex",
     flexDirection: "row",
+    flexWrap: "wrap",
   },
   fabStyle: {
     margin: 0,
@@ -32,11 +33,11 @@ const useStyles = makeStyles({
   },
   leaveCard: {
     width: 300,
-    margin: 10,
+    margin: 5,
   },
   cardContent: {
     justifyContent: "space-evenly",
-    alignItems: "space-around",
+    alignItems: "space-evenly",
   },
 });
 
@@ -99,7 +100,7 @@ const LeaveCard = ({ CardModal }) => {
     <div className={classes.displayCard}>
       <CardModal
         handleClose={handleClose}
-        modalPop={open}
+        modalState={open}
         saveAction={editButtonHandle}
         filing={filing}
         BtnAction={AddorEdit}
@@ -139,31 +140,38 @@ const LeaveCard = ({ CardModal }) => {
                   <Typography>Status:</Typography>
                   <Typography color="textSecondary">{filing.status}</Typography>
                 </CardContent>
-                <CardActions>
-                  <Button
-                    onClick={() => {
-                      handleClickOpen();
-                      setAddorEdit("edit");
-                      setFiling(userFilingList.find((x) => x.id === filing.id));
-                      console.log(filing);
-                    }}
-                    size="small"
-                    variant="contained"
-                    color="primary"
-                  >
-                    Edit
-                  </Button>
 
-                  <AlertDialog
-                    DialogText="Are you sure you want to delete your filing?"
-                    Title="Delete Filing"
-                    BtnText="Delete"
-                    BtnAction={deleteButtonHandle}
-                    Params={{
-                      id: filing.id,
-                    }}
-                  />
-                </CardActions>
+                {filing.status === "Pending" ? (
+                  <CardActions>
+                    <Button
+                      onClick={() => {
+                        handleClickOpen();
+                        setAddorEdit("edit");
+                        setFiling(
+                          userFilingList.find((x) => x.id === filing.id)
+                        );
+                        console.log(filing);
+                      }}
+                      size="small"
+                      variant="contained"
+                      color="primary"
+                    >
+                      Edit
+                    </Button>
+
+                    <AlertDialog
+                      DialogText="Are you sure you want to delete your filing?"
+                      Title="Delete Filing"
+                      BtnText="Delete"
+                      BtnAction={deleteButtonHandle}
+                      Params={{
+                        id: filing.id,
+                      }}
+                    />
+                  </CardActions>
+                ) : (
+                  ""
+                )}
               </Card>
             </div>
           );

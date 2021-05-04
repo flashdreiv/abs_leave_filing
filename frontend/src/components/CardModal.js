@@ -21,7 +21,7 @@ import {
 } from "@material-ui/pickers";
 import { Typography } from "@material-ui/core";
 
-const CardModal = ({ modalPop, handleClose, filing, BtnAction }) => {
+const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
   let today = format(new Date(), "yyyy-MM-dd");
 
   const dispatch = useDispatch();
@@ -77,7 +77,7 @@ const CardModal = ({ modalPop, handleClose, filing, BtnAction }) => {
   return (
     <div>
       <Dialog
-        open={modalPop}
+        open={modalState}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
