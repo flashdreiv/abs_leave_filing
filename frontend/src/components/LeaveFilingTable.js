@@ -9,6 +9,7 @@ import Fab from "@material-ui/core/Fab";
 import { makeStyles } from "@material-ui/core/styles";
 import DeleteDialog from "./AlertDialog";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Chip from "@material-ui/core/Chip";
 
 const useStyles = makeStyles((theme) => ({
   fabStyle: {
@@ -24,12 +25,13 @@ const useStyles = makeStyles((theme) => ({
 export default function LeaveFilingTable({ CardModal }) {
   const columns = [
     { field: "id", headerName: "ID", width: 100 },
-    { field: "LeaveType", headerName: "Leave Type", width: 200 },
-    { field: "DayType", headerName: "Total Days", width: 150 },
-    { field: "LeaveDateFrom", headerName: "Start Date", width: 150 },
-    { field: "LeaveDateTo", headerName: "End Date", width: 150 },
-    { field: "Remarks", headerName: "Remarks", width: 150 },
-    { field: "Status", headerName: "Status", width: 100 },
+    { field: "leave_type", headerName: "Leave Type", width: 200 },
+    { field: "day_type", headerName: "Total Days", width: 150 },
+    { field: "leave_date_from", headerName: "Start Date", width: 150 },
+    { field: "leave_date_to", headerName: "End Date", width: 150 },
+    { field: "remarks", headerName: "Remarks", width: 150 },
+    { field: "status", headerName: "Status", width: 100 },
+
     {
       field: "Edit",
       headerName: "Edit",
@@ -37,9 +39,9 @@ export default function LeaveFilingTable({ CardModal }) {
         return (
           <Button
             onClick={() => {
+              setFiling(userFilingList.find((x) => x.id === filing.id));
               setModalState(true);
               setBtnAction("edit");
-              setFiling(userFilingList.find((x) => x.id === filing.id));
             }}
             size="small"
             color="primary"
@@ -75,10 +77,10 @@ export default function LeaveFilingTable({ CardModal }) {
   const classes = useStyles();
   const [modalState, setModalState] = useState(false);
   const dispatch = useDispatch();
-  //Default modal value for editng
+  const { userFilingList } = useSelector((state) => state.leaveFile);
+  //Default modal value for editing
   const [filing, setFiling] = useState("");
 
-  const { userFilingList } = useSelector((state) => state.leaveFile);
   const { filingInfo } = useSelector((state) => state.leaveFile);
   const [BtnAction, setBtnAction] = useState("");
 
@@ -94,6 +96,7 @@ export default function LeaveFilingTable({ CardModal }) {
   //Delete Function for Filing
   const deleteButtonHandle = (id) => {
     dispatch(deleteLeave(id));
+    console.log("delete");
   };
 
   return (
@@ -108,19 +111,20 @@ export default function LeaveFilingTable({ CardModal }) {
         userFilingList.map((filing) => {
           rows.push({
             id: filing.id,
-            LeaveType: filing.leave_type,
-            DayType: filing.day_type,
-            LeaveDateFrom: filing.leave_date_from,
-            LeaveDateTo: filing.leave_date_to,
-            Remarks: filing.remarks,
-            Status: filing.status,
+            leave_type: filing.leave_type,
+            day_type: filing.day_type,
+            leave_date_from: filing.leave_date_from,
+            leave_date_to: filing.leave_date_to,
+            remarks: filing.remarks,
+            //Design with Chip
+            status: filing.status,
           });
         })}
       <CardModal
-        filing={filing}
         handleClose={handleClose}
         modalState={modalState}
         BtnAction={BtnAction}
+        filing={filing}
       />
 
       <Fab
@@ -137,7 +141,9 @@ export default function LeaveFilingTable({ CardModal }) {
         <DataGrid
           rows={rows}
           columns={columns}
-          onRowSelected={(newSelection) => setFiling(newSelection.data)}
+          onRowSelected={(newSelection) => {
+            setFiling(newSelection.data);
+          }}
           pageSize={5}
         />
       ) : (

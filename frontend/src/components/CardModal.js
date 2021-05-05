@@ -37,18 +37,16 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
     async function fetchData() {
       const { data } = await axiosActions[0].get("filings/leaves/");
       setLeaveTypes(data);
-      setLeave(data[0].id);
     }
+    fetchData();
     //Set default value when editing
     if (BtnAction === "edit") {
-      setdayType(filing.day_type);
       setLeave(filing.leave_type);
+      setdayType(filing.day_type);
       setleaveDateFrom(filing.leave_date_from);
       setleaveDateTo(filing.leave_date_to);
       setRemarks(filing.remarks);
     }
-
-    fetchData();
   }, [filing, BtnAction]);
 
   const handleSubmit = (e) => {
@@ -103,7 +101,7 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
                 {leaveTypes &&
                   leaveTypes.map((type) => {
                     return (
-                      <MenuItem key={type.id} value={type.id}>
+                      <MenuItem key={type.id} value={type.leave_type}>
                         {type.leave_type}
                       </MenuItem>
                     );
@@ -125,7 +123,7 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
               </Select>
               {leaveTypes &&
                 leaveTypes.map((type) => {
-                  return type.id === leave ? (
+                  return type.leave_type === leave ? (
                     <Typography key={type.id} style={{ marginTop: 10 }}>
                       Leave Credits: {type.leave_credits}
                     </Typography>
@@ -181,7 +179,7 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
                 <Button onClick={handleClose} color="primary">
                   Cancel
                 </Button>
-                <Button onClick={handleClose} type="submit" color="primary">
+                <Button type="submit" color="primary">
                   Save
                 </Button>
               </DialogActions>

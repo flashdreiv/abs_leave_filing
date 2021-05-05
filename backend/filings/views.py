@@ -31,8 +31,13 @@ class FilingView(APIView):
         try:
 
             user_id = int(request.user.id)
+            leave_type = data["leave_type"]
+
             filing = Filing.objects.get(pk=pk, user__id=user_id)
-            leave_type = LeaveType.objects.get(pk=data["leave_type"])
+            for leave, leaveString in enumerate(LeaveType.leave_type_choices):
+                if leaveString[1] == leave_type:
+                    leave_type = leaveString[0]
+            leave_type = LeaveType.objects.get(user__id=user_id, leave_type=leave_type)
             if filing.status == "1":
                 filing.leave_type = leave_type
                 filing.day_type = data["day_type"]
@@ -51,16 +56,14 @@ class FilingView(APIView):
         try:
             user_id = int(request.user.id)
             filing = Filing.objects.get(user__id=user_id, pk=pk)
-            if filing.status == "1":
-                if filing.day_type == "1" or filing.day_type == "2":
-                    filing.leave_type.leave_credits = F("leave_credits") + 0.5
-                elif filing.day_type == "3":
-                    filing.leave_type.leave_credits = F("leave_credits") + 1
-                filing.leave_type.save()
-                filing.delete()
-                return Response({"Success": "delete success"})
-            else:
-                return Response({"error": "You can't delete approved request"})
+            # if filing.status == "1":
+            #     if filing.day_type == "1" or filing.day_type == "2":
+            #         filing.leave_type.leave_credits = F("leave_credits") + 0.5
+            #     elif filing.day_type == "3":
+            #         filing.leave_type.leave_credits = F("leave_credits") + 1
+            #     filing.leave_type.save()
+            filing.delete()
+            return Response({"Success": "delete success"})
         except BaseException as e:
             return Response({"error": e})
 
@@ -75,7 +78,12 @@ class FilingView(APIView):
         remarks = data["remarks"]
 
         try:
-            leave_type = LeaveType.objects.get(user__id=user_id, pk=leave_type)
+            for leave, leaveString in enumerate(LeaveType.leave_type_choices):
+                if leaveString[1] == leave_type:
+                    leave_type = leaveString[0]
+                else:
+                    leave_type = LeaveType.leave_type_choices[0][0]
+            leave_type = LeaveType.objects.get(user__id=user_id, leave_type=leave_type)
             Filing.objects.create(
                 user=request.user,
                 leave_type=leave_type,
