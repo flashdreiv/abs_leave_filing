@@ -1,6 +1,6 @@
 import React from "react";
 import LeaveCard from "./LeaveCard";
-import CardModal from "../components/CardModal";
+import CardModal from "./CardModal";
 
 //Material UI
 import clsx from "clsx";
@@ -83,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Dashboard({ history }) {
+export default function Navbar({ history }) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
