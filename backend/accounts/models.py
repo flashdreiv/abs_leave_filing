@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import Group
 from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
@@ -15,6 +16,7 @@ class UserAccountManager(BaseUserManager):
 
         email = self.normalize_email(email)
         user = self.model(email=email)
+        group = models.ForeignKey(Group, on_delete=models.SET_NULL)
 
         user.set_password(password)
         user.save()
@@ -34,7 +36,6 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
     objects = UserAccountManager()
 
     USERNAME_FIELD = "email"
@@ -44,9 +45,10 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
 
 class Department(models.Model):
+    user_list = [(user.pk, user.email) for user in UserAccount.objects.all()]
     staff = models.ManyToManyField(UserAccount)
     department = models.CharField(max_length=100)
-    department_head = models.EmailField()
+    department_head = models.CharField(choices=user_list, max_length=150)
 
     def __str__(self):
         return self.department

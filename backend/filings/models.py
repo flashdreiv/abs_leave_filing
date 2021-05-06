@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.models import UserAccount
 from multiselectfield import MultiSelectField
+from django.db.models.signals import post_save
 
 # Create your models here.
 
@@ -23,9 +24,21 @@ class LeaveType(models.Model):
         return self.get_leave_type_display()
 
 
+status_choice = (("1", "Pending"), ("2", "Approve"), ("3", "Rejected"))
+
+
+class Approval(models.Model):
+    approver = models.ForeignKey(
+        UserAccount, on_delete=models.CASCADE, null=True, blank=True
+    )
+    status = models.CharField(choices=status_choice, max_length=10, default="1")
+
+    def __str__(self):
+        return self.filing.user.email
+
+
 class Filing(models.Model):
     day_type_choice = (("1", "First Half"), ("2", "Second Half"), ("3", "Whole day"))
-    staus_choice = (("1", "Pending"), ("2", "Approve"), ("3", "Rejected"))
     user = models.ForeignKey(
         UserAccount,
         on_delete=models.CASCADE,
@@ -40,7 +53,19 @@ class Filing(models.Model):
         LeaveType, on_delete=models.SET_NULL, null=True, blank=True
     )
     remarks = models.CharField(max_length=300)
-    status = models.CharField(choices=staus_choice, max_length=50, default="1")
+    approvalStage = models.ForeignKey(
+        Approval, on_delete=models.CASCADE, null=True, blank=True
+    )
+    status = models.CharField(choices=status_choice, max_length=50, default="1")
 
     def __str__(self):
         return self.user.email
+
+
+def create_approval(sender, instance, created, **kwargs):
+    if created:
+        Approval.objects.create(approvalStage=instance)
+        print("test")
+
+
+post_save.connect(create_approval, sender=Filing)

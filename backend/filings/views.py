@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .serializers import FilingSerializer, LeaveTypeSerializer
+from .serializers import FilingSerializer, LeaveTypeSerializer, ApprovalSerializer
 from accounts.models import UserAccount
-from .models import Filing, LeaveType
+from .models import Filing, LeaveType, Approval
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import F
@@ -18,7 +18,10 @@ class FilingView(APIView):
     def get(self, request, format=None):
         try:
             user = UserAccount.objects.get(pk=int(request.user.id))
-            queryset = Filing.objects.filter(user=user)
+            if user.is_superuser:
+                queryset = Filing.objects.filter(status="1")
+            else:
+                queryset = Filing.objects.filter(user=user)
             filings = FilingSerializer(queryset, many=True)
         except BaseException as e:
             return Response({"error": e})
@@ -123,3 +126,17 @@ class LeaveTypeView(APIView):
             return Response({"error": e})
 
         return Response(leaveType.data)
+
+
+class ApprovalView(APIView):
+    serializer_class = ApprovalSerializer
+    permission_classes = (IsAuthenticated,)
+
+    # def get(self, request, format=None):
+    #     try:
+    #         queryset = Approval.objects.filter(approver=request.user.id, status="1")
+    #         approvals = ApprovalSerializer(queryset.filing, many=True)
+    #     except BaseException as e:
+    #         return Response({"error": e})
+
+    #     return Response(approvals.data)

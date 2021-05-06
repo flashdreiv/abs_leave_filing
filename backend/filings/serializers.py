@@ -1,5 +1,5 @@
 from rest_framework import serializers, fields
-from .models import Filing, LeaveType
+from .models import Filing, LeaveType, Approval
 
 
 class FilingSerializer(serializers.ModelSerializer):
@@ -26,3 +26,9 @@ class LeaveTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaveType
         fields = ["id", "leave_type", "leave_credits"]
+
+
+class ApprovalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Approval
+        fields = "__all__"
