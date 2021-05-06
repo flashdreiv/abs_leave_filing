@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import LeaveFilingTable from "./LeaveFilingTable";
 import Navbar from "./Navbar";
 import CardModal from "./CardModal";
+
 //Material UI
 import Grid from "@material-ui/core/Grid";
 

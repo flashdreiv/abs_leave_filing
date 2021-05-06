@@ -27,16 +27,6 @@ class LeaveType(models.Model):
 status_choice = (("1", "Pending"), ("2", "Approve"), ("3", "Rejected"))
 
 
-class Approval(models.Model):
-    approver = models.ForeignKey(
-        UserAccount, on_delete=models.CASCADE, null=True, blank=True
-    )
-    status = models.CharField(choices=status_choice, max_length=10, default="1")
-
-    def __str__(self):
-        return self.filing.user.email
-
-
 class Filing(models.Model):
     day_type_choice = (("1", "First Half"), ("2", "Second Half"), ("3", "Whole day"))
     user = models.ForeignKey(
@@ -53,9 +43,6 @@ class Filing(models.Model):
         LeaveType, on_delete=models.SET_NULL, null=True, blank=True
     )
     remarks = models.CharField(max_length=300)
-    approvalStage = models.ForeignKey(
-        Approval, on_delete=models.CASCADE, null=True, blank=True
-    )
     status = models.CharField(choices=status_choice, max_length=50, default="1")
 
     def __str__(self):
@@ -64,8 +51,18 @@ class Filing(models.Model):
 
 def create_approval(sender, instance, created, **kwargs):
     if created:
-        Approval.objects.create(approvalStage=instance)
+        Approval.objects.create(filing=instance, level=0)
         print("test")
 
 
 post_save.connect(create_approval, sender=Filing)
+
+
+class Approval(models.Model):
+    filing = models.ForeignKey(Filing, on_delete=models.CASCADE, null=True, blank=True)
+    level = models.SmallIntegerField(default=0)
+    approver = models.EmailField(null=True, blank=True)
+    status = models.CharField(choices=status_choice, max_length=10, default="1")
+
+    def __str__(self):
+        return self.filing.user.email

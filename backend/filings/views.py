@@ -132,11 +132,13 @@ class ApprovalView(APIView):
     serializer_class = ApprovalSerializer
     permission_classes = (IsAuthenticated,)
 
-    # def get(self, request, format=None):
-    #     try:
-    #         queryset = Approval.objects.filter(approver=request.user.id, status="1")
-    #         approvals = ApprovalSerializer(queryset.filing, many=True)
-    #     except BaseException as e:
-    #         return Response({"error": e})
+    def get(self, request, format=None):
 
-    #     return Response(approvals.data)
+        try:
+            user = UserAccount.objects.get(pk=request.user.id)
+            queryset = Approval.objects.filter(approver=user.email, status="1")
+            approvals = ApprovalSerializer(queryset, many=True)
+        except BaseException as e:
+            return Response({"error": e})
+
+        return Response(approvals.data)

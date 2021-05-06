@@ -22,8 +22,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function LeaveFilingTable({ CardModal }) {
-  const columns = [
+export default function LeaveFilingTable({ CardModal, userType, columns }) {
+  const rows = [];
+
+  const employeeColumns = [
     { field: "id", headerName: "ID", width: 100 },
     { field: "leave_type", headerName: "Leave Type", width: 200 },
     { field: "day_type", headerName: "Total Days", width: 150 },
@@ -70,11 +72,10 @@ export default function LeaveFilingTable({ CardModal }) {
       width: 100,
     },
   ];
-
-  const rows = [];
-
   //------Above is table Data-----//
   const classes = useStyles();
+  //Check if admin to change columns
+  columns = userType === "admin" ? columns : employeeColumns;
   const [modalState, setModalState] = useState(false);
   const dispatch = useDispatch();
   const { userFilingList } = useSelector((state) => state.leaveFile);
@@ -120,23 +121,29 @@ export default function LeaveFilingTable({ CardModal }) {
             status: filing.status,
           });
         })}
-      <CardModal
-        handleClose={handleClose}
-        modalState={modalState}
-        BtnAction={BtnAction}
-        filing={filing}
-      />
+      {userType === "admin" ? (
+        ""
+      ) : (
+        <>
+          <CardModal
+            handleClose={handleClose}
+            modalState={modalState}
+            BtnAction={BtnAction}
+            filing={filing}
+          />
+          <Fab
+            onClick={() => {
+              setModalState(true);
+              setBtnAction("add");
+            }}
+            color="primary"
+            className={classes.fabStyle}
+          >
+            <AddIcon />
+          </Fab>
+        </>
+      )}
 
-      <Fab
-        onClick={() => {
-          setModalState(true);
-          setBtnAction("add");
-        }}
-        color="primary"
-        className={classes.fabStyle}
-      >
-        <AddIcon />
-      </Fab>
       {rows.length > 0 ? (
         <DataGrid
           rows={rows}
