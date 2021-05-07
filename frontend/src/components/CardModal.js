@@ -40,7 +40,7 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
     }
     fetchData();
     //Set default value when editing
-    if (BtnAction === "edit" || BtnAction === "adminView") {
+    if (BtnAction === "edit") {
       setLeave(filing.leave_type);
       setdayType(filing.day_type);
       setleaveDateFrom(filing.leave_date_from);
@@ -107,20 +107,14 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
                 value={leave}
                 onChange={handleChange}
               >
-                {BtnAction === "adminView" ? (
-                  <MenuItem key={filing.id} value={filing.leave_type}>
-                    {filing.leave_type}
-                  </MenuItem>
-                ) : (
-                  leaveTypes &&
+                {leaveTypes &&
                   leaveTypes.map((type) => {
                     return (
                       <MenuItem key={type.id} value={type.leave_type}>
                         {type.leave_type}
                       </MenuItem>
                     );
-                  })
-                )}
+                  })}
               </Select>
             </FormControl>
             <FormControl style={{ marginTop: 10 }}>
@@ -194,16 +188,8 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
                 <Button onClick={handleClose} color="primary">
                   Cancel
                 </Button>
-                {BtnAction === "adminView" ? (
-                  <Button onClick={handleClose} color="primary">
-                    Reject
-                  </Button>
-                ) : (
-                  ""
-                )}
-
                 <Button type="submit" color="primary">
-                  {BtnAction === "adminView" ? "Approve" : "Save"}
+                  Save
                 </Button>
               </DialogActions>
             </FormControl>

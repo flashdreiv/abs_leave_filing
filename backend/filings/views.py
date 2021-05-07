@@ -131,18 +131,16 @@ class LeaveTypeView(APIView):
 
 
 class ApprovalView(APIView):
-    serializer_class = ApprovalSerializer
+    serializer_class = FilingSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, format=None):
-
+    def post(self, request, pk, format=None):
         try:
-
-            print(filing)
-
-            queryset = Approval.objects.filter(approver=request.user.email, status="1")
-            approvals = ApprovalSerializer(queryset, many=True)
+            queryset = Filing.objects.get(
+                pk=pk, approval__approver=request.user.email, status="1"
+            )
+            approval = FilingSerializer(queryset, many=True)
         except BaseException as e:
             return Response({"error": e})
 
-        return Response(approvals.data)
+        return Response(approval.data)

@@ -7,6 +7,9 @@ import {
   USER_EDIT_FILING_SUCCESS,
   USER_EDIT_FILING_FAIL,
   USER_DELETE_FILING,
+  APPROVE_FILING_REQUEST,
+  APPROVE_FILING_SUCCESS,
+  APPROVE_FILING_FAIL,
 } from "../constants/LeaveFilingConstants";
 
 export const LeaveFilingReducer = (state = {}, action) => {
@@ -43,6 +46,22 @@ export const EditLeaveFilingReducer = (state = {}, action) => {
       return { loading: false, filingInfo: action.payload };
 
     case USER_EDIT_FILING_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const ApproveLeaveReducer = (state = {}, action) => {
+  switch (action.type) {
+    case APPROVE_FILING_REQUEST:
+      return { loading: true };
+
+    case APPROVE_FILING_SUCCESS:
+      return { loading: false, approvalStatus: action.payload };
+
+    case APPROVE_FILING_FAIL:
       return { loading: false, error: action.payload };
 
     default:

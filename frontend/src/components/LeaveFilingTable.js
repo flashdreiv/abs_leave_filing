@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteLeave, listLeave } from "../actions/LeaveFilingAction";
+import FilingDetailDialog from "./FilingDetailDialog";
 //Material UI
 import { DataGrid } from "@material-ui/data-grid";
 import Button from "@material-ui/core/Button";
@@ -77,6 +78,7 @@ export default function LeaveFilingTable({ CardModal, userType, columns }) {
   //Check if admin to change columns
   columns = userType === "admin" ? columns : employeeColumns;
   const [modalState, setModalState] = useState(false);
+  const [dialog, setDialog] = useState(false);
   const dispatch = useDispatch();
   const { userFilingList } = useSelector((state) => state.leaveFile);
   //Default modal value for editing
@@ -102,9 +104,9 @@ export default function LeaveFilingTable({ CardModal, userType, columns }) {
 
   const modalAction = (newSelection) => {
     if (userType === "admin") {
-      setModalState(true);
       setBtnAction("adminView");
       setFiling(newSelection.data);
+      setDialog(true);
     } else {
       setFiling(newSelection.data);
     }
@@ -133,11 +135,11 @@ export default function LeaveFilingTable({ CardModal, userType, columns }) {
           });
         })}
       {userType === "admin" ? (
-        <CardModal
-          handleClose={handleClose}
-          modalState={modalState}
-          BtnAction={BtnAction}
+        <FilingDetailDialog
+          dialog={dialog}
+          setDialog={setDialog}
           filing={filing}
+          title="Details"
         />
       ) : (
         <>

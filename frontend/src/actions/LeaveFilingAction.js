@@ -9,6 +9,9 @@ import {
   USER_EDIT_FILING_SUCCESS,
   USER_EDIT_FILING_FAIL,
   USER_DELETE_FILING,
+  APPROVE_FILING_REQUEST,
+  APPROVE_FILING_SUCCESS,
+  APPROVE_FILING_FAIL,
 } from "../constants/LeaveFilingConstants";
 
 //Insert Leave
@@ -123,6 +126,29 @@ export const deleteLeave = (id) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: USER_FILING_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+//Approve Leave
+export const approveLeave = (id) => async (dispatch) => {
+  try {
+    dispatch({
+      type: APPROVE_FILING_REQUEST,
+    });
+    const { data } = await axiosActions[0].delete(`approvals/${id}`);
+
+    dispatch({
+      type: APPROVE_FILING_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: APPROVE_FILING_FAIL,
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail
