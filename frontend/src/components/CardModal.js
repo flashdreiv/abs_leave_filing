@@ -40,7 +40,7 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
     }
     fetchData();
     //Set default value when editing
-    if (BtnAction === "edit") {
+    if (BtnAction === "edit" || BtnAction === "adminView") {
       setLeave(filing.leave_type);
       setdayType(filing.day_type);
       setleaveDateFrom(filing.leave_date_from);
@@ -52,9 +52,14 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    BtnAction === "add"
-      ? dispatch(fileLeave(leave, dayType, leaveDateFrom, leaveDateTo, remarks))
-      : dispatch(
+    switch (BtnAction) {
+      case "add":
+        dispatch(
+          fileLeave(leave, dayType, leaveDateFrom, leaveDateTo, remarks)
+        );
+        break;
+      case "edit":
+        dispatch(
           editLeave(
             filing.id,
             leave,
@@ -64,6 +69,10 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
             remarks
           )
         );
+        break;
+      case "adminView":
+        return "";
+    }
 
     handleClose();
   };
@@ -98,14 +107,20 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
                 value={leave}
                 onChange={handleChange}
               >
-                {leaveTypes &&
+                {BtnAction === "adminView" ? (
+                  <MenuItem key={filing.id} value={filing.leave_type}>
+                    {filing.leave_type}
+                  </MenuItem>
+                ) : (
+                  leaveTypes &&
                   leaveTypes.map((type) => {
                     return (
                       <MenuItem key={type.id} value={type.leave_type}>
                         {type.leave_type}
                       </MenuItem>
                     );
-                  })}
+                  })
+                )}
               </Select>
             </FormControl>
             <FormControl style={{ marginTop: 10 }}>
@@ -179,8 +194,16 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
                 <Button onClick={handleClose} color="primary">
                   Cancel
                 </Button>
+                {BtnAction === "adminView" ? (
+                  <Button onClick={handleClose} color="primary">
+                    Reject
+                  </Button>
+                ) : (
+                  ""
+                )}
+
                 <Button type="submit" color="primary">
-                  Save
+                  {BtnAction === "adminView" ? "Approve" : "Save"}
                 </Button>
               </DialogActions>
             </FormControl>

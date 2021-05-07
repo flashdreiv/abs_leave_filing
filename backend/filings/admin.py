@@ -7,7 +7,12 @@ class ApprovalAdmin(admin.ModelAdmin):
     list_editable = ("status",)
 
 
+class LeaveTypeAdmin(admin.ModelAdmin):
+    list_display = ["user", "leave_type", "leave_credits"]
+    list_editable = ("leave_type",)
+
+
 # Register your models here.
 admin.site.register(Filing)
-admin.site.register(LeaveType)
+admin.site.register(LeaveType, LeaveTypeAdmin)
 admin.site.register(Approval, ApprovalAdmin)

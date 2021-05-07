@@ -6,11 +6,13 @@ class FilingSerializer(serializers.ModelSerializer):
     leave_type = serializers.StringRelatedField()
     day_type = serializers.CharField(source="get_day_type_display")
     status = serializers.CharField(source="get_status_display")
+    user = serializers.StringRelatedField()
 
     class Meta:
         model = Filing
         fields = [
             "id",
+            "user",
             "leave_type",
             "day_type",
             "leave_date_from",

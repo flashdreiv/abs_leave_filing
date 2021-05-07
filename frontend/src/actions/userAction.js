@@ -72,6 +72,7 @@ export const logout = () => async (dispatch) => {
       refresh: logoutData.refresh,
     });
     localStorage.removeItem("userInfo");
+    localStorage.removeItem("filing_list");
     dispatch({
       type: USER_LOGOUT,
     });

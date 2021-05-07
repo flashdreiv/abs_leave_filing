@@ -7,7 +7,7 @@ import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import Fab from "@material-ui/core/Fab";
 import { makeStyles } from "@material-ui/core/styles";
-import DeleteDialog from "./AlertDialog";
+import AlertDialog from "./AlertDialog";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Chip from "@material-ui/core/Chip";
 
@@ -60,7 +60,7 @@ export default function LeaveFilingTable({ CardModal, userType, columns }) {
       headerName: "Delete",
       renderCell: () => {
         return (
-          <DeleteDialog
+          <AlertDialog
             DialogText="Are you sure you want to delete your filing?"
             Title="Delete Filing"
             BtnText="Delete"
@@ -100,6 +100,16 @@ export default function LeaveFilingTable({ CardModal, userType, columns }) {
     console.log("delete");
   };
 
+  const modalAction = (newSelection) => {
+    if (userType === "admin") {
+      setModalState(true);
+      setBtnAction("adminView");
+      setFiling(newSelection.data);
+    } else {
+      setFiling(newSelection.data);
+    }
+  };
+
   return (
     <div
       style={{
@@ -112,6 +122,7 @@ export default function LeaveFilingTable({ CardModal, userType, columns }) {
         userFilingList.map((filing) => {
           rows.push({
             id: filing.id,
+            requestedby: filing.user,
             leave_type: filing.leave_type,
             day_type: filing.day_type,
             leave_date_from: filing.leave_date_from,
@@ -122,7 +133,12 @@ export default function LeaveFilingTable({ CardModal, userType, columns }) {
           });
         })}
       {userType === "admin" ? (
-        ""
+        <CardModal
+          handleClose={handleClose}
+          modalState={modalState}
+          BtnAction={BtnAction}
+          filing={filing}
+        />
       ) : (
         <>
           <CardModal
@@ -149,7 +165,7 @@ export default function LeaveFilingTable({ CardModal, userType, columns }) {
           rows={rows}
           columns={columns}
           onRowSelected={(newSelection) => {
-            setFiling(newSelection.data);
+            modalAction(newSelection);
           }}
           pageSize={5}
         />

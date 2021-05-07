@@ -36,14 +36,17 @@ class Filing(models.Model):
         blank=True,
     )
     date_filed = models.DateTimeField(auto_now_add=True)
-    leave_date_from = models.DateField(null=True, blank=True, unique=True)
-    leave_date_to = models.DateField(null=True, blank=True, unique=True)
+    leave_date_from = models.DateField(null=True, blank=True)
+    leave_date_to = models.DateField(null=True, blank=True)
     day_type = models.CharField(choices=day_type_choice, max_length=50, default="3")
     leave_type = models.ForeignKey(
         LeaveType, on_delete=models.SET_NULL, null=True, blank=True
     )
     remarks = models.CharField(max_length=300)
     status = models.CharField(choices=status_choice, max_length=50, default="1")
+
+    class Meta:
+        unique_together = [["leave_date_from", "user"], ["leave_date_to", "user"]]
 
     def __str__(self):
         return self.user.email

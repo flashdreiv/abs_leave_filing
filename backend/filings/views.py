@@ -19,7 +19,9 @@ class FilingView(APIView):
         try:
             user = UserAccount.objects.get(pk=int(request.user.id))
             if user.is_superuser:
-                queryset = Filing.objects.filter(status="1")
+                queryset = Filing.objects.filter(
+                    approval__approver=user.email, status="1"
+                )
             else:
                 queryset = Filing.objects.filter(user=user)
             filings = FilingSerializer(queryset, many=True)
@@ -135,8 +137,10 @@ class ApprovalView(APIView):
     def get(self, request, format=None):
 
         try:
-            user = UserAccount.objects.get(pk=request.user.id)
-            queryset = Approval.objects.filter(approver=user.email, status="1")
+
+            print(filing)
+
+            queryset = Approval.objects.filter(approver=request.user.email, status="1")
             approvals = ApprovalSerializer(queryset, many=True)
         except BaseException as e:
             return Response({"error": e})
