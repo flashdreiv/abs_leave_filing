@@ -66,6 +66,7 @@ class Approval(models.Model):
     level = models.SmallIntegerField(default=0)
     approver = models.EmailField(null=True, blank=True)
     status = models.CharField(choices=status_choice, max_length=10, default="1")
+    remarks = models.CharField(max_length=250, null=True, blank=True)
 
     def __str__(self):
         return self.filing.user.email

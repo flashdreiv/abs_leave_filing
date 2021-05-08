@@ -27,32 +27,26 @@ class FilingView(APIView):
             filings = FilingSerializer(queryset, many=True)
         except BaseException as e:
             return Response({"error": e})
-
         return Response(filings.data)
 
     def put(self, request, pk, format=None):
         data = self.request.data
 
         try:
-
             user_id = int(request.user.id)
             leave_type = data["leave_type"]
-
             filing = Filing.objects.get(pk=pk, user__id=user_id)
             for leave, leaveString in enumerate(LeaveType.leave_type_choices):
                 if leaveString[1] == leave_type:
                     leave_type = leaveString[0]
             leave_type = LeaveType.objects.get(user__id=user_id, leave_type=leave_type)
-            if filing.status == "1":
-                filing.leave_type = leave_type
-                filing.day_type = data["day_type"]
-                filing.leave_date_from = data["leave_date_from"]
-                filing.leave_date_to = data["leave_date_to"]
-                filing.remarks = data["remarks"]
-                filing.save()
-                return Response({"success": "Update successful"})
-            else:
-                return Response({"error": "Filing Can't be updated"})
+            filing.leave_type = leave_type
+            filing.day_type = data["day_type"]
+            filing.leave_date_from = data["leave_date_from"]
+            filing.leave_date_to = data["leave_date_to"]
+            filing.remarks = data["remarks"]
+            filing.save()
+            return Response({"success": "Update successful"})
 
         except BaseException as e:
             return Response({"error": e})
@@ -131,16 +125,29 @@ class LeaveTypeView(APIView):
 
 
 class ApprovalView(APIView):
-    serializer_class = FilingSerializer
+    serializer_class = ApprovalSerializer
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, pk, format=None):
+        data = self.request.data
         try:
-            queryset = Filing.objects.get(
-                pk=pk, approval__approver=request.user.email, status="1"
+            queryset = Approval.objects.get(
+                filing__pk=pk, approver=request.user.email, status="1"
             )
-            approval = FilingSerializer(queryset, many=True)
+            queryset.status = data["approved"]
+            if query.status == "2":
+                # Check daytype to decrement leave credits
+                if queryset.filing.day_type == "3":
+                    queryset.filing.leave_type.leave_credits = F("leave_credits") - 1
+                else:
+                    queryset.filing.leave_type.leave_credits = F("leave_credits") - 0.5
+
+            queryset.remarks = data["remarks"]
+            queryset.filing.leave_type.save()
+            queryset.save()
+            approval = ApprovalSerializer(queryset)
+            return Response({"success": "Successfully approved"})
         except BaseException as e:
-            return Response({"error": e})
+            return Response({"error": "Approval Error"})
 
         return Response(approval.data)

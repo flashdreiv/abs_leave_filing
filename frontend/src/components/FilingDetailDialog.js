@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+//Material UI
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -6,16 +8,21 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
-
+import { approveLeave } from "../actions/LeaveFilingAction";
 import { Typography } from "@material-ui/core";
 
 export default function AlertDialog({ dialog, setDialog, title, filing }) {
+  const dispatch = useDispatch();
+  const { approvalStatus } = useSelector((state) => state.approveLeave);
+
+  const [remarks, setRemarks] = useState("");
+
   const handleApprove = () => {
-    console.log("Approve");
+    dispatch(approveLeave(filing.id, "2", remarks));
     setDialog(false);
   };
   const handleReject = () => {
-    console.log("Approve");
+    dispatch(approveLeave(filing.id, "3", remarks));
     setDialog(false);
   };
 
@@ -46,6 +53,7 @@ export default function AlertDialog({ dialog, setDialog, title, filing }) {
             type="text"
             fullWidth
             multiline
+            onChange={(e) => setRemarks(e.target.value)}
           />
         </DialogContent>
 
