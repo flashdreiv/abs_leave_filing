@@ -23,7 +23,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function LeaveFilingTable({ CardModal, userType, columns }) {
+export default function LeaveFilingTable({
+  tableType,
+  CardModal,
+  userType,
+  columns,
+}) {
   const rows = [];
 
   const employeeColumns = [
@@ -87,7 +92,7 @@ export default function LeaveFilingTable({ CardModal, userType, columns }) {
   const { filingInfo } = useSelector((state) => state.leaveFile);
   const [BtnAction, setBtnAction] = useState("");
 
-  //Approval status for filing
+  //Approval status state
   const { approvalStatus } = useSelector((state) => state.approveLeave);
 
   //Use effect

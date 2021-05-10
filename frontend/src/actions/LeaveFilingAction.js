@@ -51,12 +51,17 @@ export const fileLeave = (
   }
 };
 //Get listings of leave
-export const listLeave = () => async (dispatch) => {
+export const listLeave = (listType) => async (dispatch) => {
   try {
     dispatch({
       type: USER_FILING_REQUEST,
     });
-    const { data } = await axiosActions[0].get("filings/");
+
+    const { data } = await axiosActions[0].get("filings/", {
+      params: {
+        leave_type_status: listType,
+      },
+    });
     localStorage.setItem("filing_list", JSON.stringify(data));
 
     dispatch({

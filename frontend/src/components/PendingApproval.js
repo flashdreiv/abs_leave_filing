@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "./Navbar";
-import LeaveFilingTable from "./LeaveFilingTable";
+import PendingFilingTable from "./PendingFilingTable";
 import CardModal from "./CardModal";
 
 //Material UI
@@ -10,7 +10,7 @@ const PendingApproval = () => {
     <div>
       <Navbar />
       <Grid container direction="row" justify="center" alignItems="center">
-        <LeaveFilingTable CardModal={CardModal} />
+        <PendingFilingTable CardModal={CardModal} />
       </Grid>
     </div>
   );

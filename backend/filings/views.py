@@ -16,14 +16,25 @@ class FilingView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
+        data = self.request.data
         try:
             user = UserAccount.objects.get(pk=int(request.user.id))
+            group = request.user.groups.all()[0].name
             if user.is_superuser:
                 queryset = Filing.objects.filter(
                     approval__approver=user.email, status="1"
                 )
             else:
-                queryset = Filing.objects.filter(user=user)
+                if group == "Middle Manager":
+                    try:
+                        if data["status"] == "pending":
+                            queryset = Filing.objects.filter(
+                                approval__approver=user.email, status="1"
+                            )
+                            print(queryset)
+                    except:
+                        queryset = Filing.objects.filter(user=user)
+
             filings = FilingSerializer(queryset, many=True)
         except BaseException as e:
             return Response({"error": e})
