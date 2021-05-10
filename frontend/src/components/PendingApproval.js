@@ -1,12 +1,11 @@
 import React from "react";
-import LeaveFilingTable from "./LeaveFilingTable";
 import Navbar from "./Navbar";
+import LeaveFilingTable from "./LeaveFilingTable";
 import CardModal from "./CardModal";
 
 //Material UI
 import Grid from "@material-ui/core/Grid";
-
-const Employee = () => {
+const PendingApproval = () => {
   return (
     <div>
       <Navbar />
@@ -17,4 +16,4 @@ const Employee = () => {
   );
 };
 
-export default Employee;
+export default PendingApproval;

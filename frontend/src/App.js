@@ -4,6 +4,7 @@ import Login from "./components/Login";
 import Admin from "./components/Admin";
 import Signup from "./components/Signup";
 import Employee from "./components/Employee";
+import PendingView from "./components/PendingApproval";
 
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import RequireAuth from "./utils/requireAuth";
@@ -24,6 +25,11 @@ function App() {
             path="/employee"
             exact
             component={(props) => <RequireAuth Component={Employee} />}
+          />
+          <Route
+            path="/pending"
+            exact
+            component={(props) => <RequireAuth Component={PendingView} />}
           />
           <Route path="/signup" exact component={Signup} />
         </Switch>

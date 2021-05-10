@@ -55,7 +55,6 @@ class Filing(models.Model):
 def create_approval(sender, instance, created, **kwargs):
     if created:
         Approval.objects.create(filing=instance, level=0)
-        print("test")
 
 
 post_save.connect(create_approval, sender=Filing)

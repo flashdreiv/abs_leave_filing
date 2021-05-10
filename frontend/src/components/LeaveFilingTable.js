@@ -27,12 +27,12 @@ export default function LeaveFilingTable({ CardModal, userType, columns }) {
   const rows = [];
 
   const employeeColumns = [
-    { field: "id", headerName: "ID", width: 100 },
-    { field: "leave_type", headerName: "Leave Type", width: 200 },
-    { field: "day_type", headerName: "Total Days", width: 150 },
-    { field: "leave_date_from", headerName: "Start Date", width: 150 },
-    { field: "leave_date_to", headerName: "End Date", width: 150 },
-    { field: "remarks", headerName: "Remarks", width: 150 },
+    { field: "id", headerName: "ID", width: 70 },
+    { field: "leave_type", headerName: "Leave Type", width: 150 },
+    { field: "day_type", headerName: "Total Days", width: 120 },
+    { field: "leave_date_from", headerName: "Start Date", width: 120 },
+    { field: "leave_date_to", headerName: "End Date", width: 120 },
+    { field: "remarks", headerName: "Remarks", width: 120 },
     { field: "status", headerName: "Status", width: 100 },
 
     {
@@ -87,10 +87,13 @@ export default function LeaveFilingTable({ CardModal, userType, columns }) {
   const { filingInfo } = useSelector((state) => state.leaveFile);
   const [BtnAction, setBtnAction] = useState("");
 
+  //Approval status for filing
+  const { approvalStatus } = useSelector((state) => state.approveLeave);
+
   //Use effect
   useEffect(() => {
     dispatch(listLeave());
-  }, [filingInfo, dispatch]);
+  }, [filingInfo, dispatch, approvalStatus]);
 
   //Close modal
   const handleClose = () => {

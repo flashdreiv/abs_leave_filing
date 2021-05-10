@@ -1,7 +1,5 @@
 import React from "react";
-import LeaveCard from "./LeaveCard";
-import CardModal from "./CardModal";
-
+import { Link } from "react-router-dom";
 //Material UI
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -140,18 +138,65 @@ export default function Navbar({ history }) {
         </div>
         <Divider />
         <List>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
+          {["Filing", "Pending", "Approved", "Reject"].map((text, index) => (
+            <div>
+              {(() => {
+                switch (text) {
+                  case "Pending":
+                    return (
+                      <Link
+                        style={{ textDecoration: "none", color: "black" }}
+                        to="/pending"
+                      >
+                        <ListItem button key={text}>
+                          <ListItemIcon>
+                            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                          </ListItemIcon>
+
+                          <ListItemText primary={text} />
+                        </ListItem>
+                      </Link>
+                    );
+                  case "Filing":
+                    return (
+                      <Link
+                        style={{ textDecoration: "none", color: "black" }}
+                        to="/employee"
+                      >
+                        <ListItem button key={text}>
+                          <ListItemIcon>
+                            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                          </ListItemIcon>
+
+                          <ListItemText primary={text} />
+                        </ListItem>
+                      </Link>
+                    );
+                  default:
+                    return (
+                      <ListItem button key={text}>
+                        <ListItemIcon>
+                          {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                        </ListItemIcon>
+                        <ListItemText primary={text} />
+                      </ListItem>
+                    );
+                }
+              })()}
+            </div>
+            // <ListItem button key={text}>
+            //   <ListItemIcon>
+            //     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+            //   </ListItemIcon>
+            //   <Link style={{ textDecoration: "none" }} to="/pending">
+            //     <ListItemText primary={text} />
+            //   </Link>
+            // </ListItem>
           ))}
         </List>
         <Divider />
         <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
+          {["Reports"].map((text, index) => (
             <ListItem button key={text}>
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}

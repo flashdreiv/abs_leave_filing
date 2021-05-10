@@ -69,9 +69,6 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
             remarks
           )
         );
-        break;
-      case "adminView":
-        return "";
     }
 
     handleClose();
@@ -143,7 +140,6 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
 
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
-                  minDate={today}
                   autoOk={true}
                   disableToolbar
                   variant="inline"
@@ -159,7 +155,6 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
                   }}
                 />
                 <KeyboardDatePicker
-                  minDate={today}
                   autoOk={true}
                   disableToolbar
                   variant="inline"

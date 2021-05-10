@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 //Material UI
 import Button from "@material-ui/core/Button";
@@ -13,7 +13,6 @@ import { Typography } from "@material-ui/core";
 
 export default function AlertDialog({ dialog, setDialog, title, filing }) {
   const dispatch = useDispatch();
-  const { approvalStatus } = useSelector((state) => state.approveLeave);
 
   const [remarks, setRemarks] = useState("");
 
@@ -37,13 +36,19 @@ export default function AlertDialog({ dialog, setDialog, title, filing }) {
         <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <Typography>Requested by: {filing.requestedby}</Typography>
-            <Typography>Leave Type: {filing.leave_type}</Typography>
-            <Typography>Day Type: {filing.day_type}</Typography>
-            <Typography>Leave Date From: {filing.leave_date_from}</Typography>
-            <Typography>Leave Date To: {filing.leave_date_to}</Typography>
-            <Typography>Remarks: {filing.remarks}</Typography>
-            <Typography>Status: {filing.status}</Typography>
+            Requested by: {filing.requestedby}
+            <br></br>
+            Leave Type: {filing.leave_type}
+            <br></br>
+            Day Type: {filing.day_type}
+            <br></br>
+            Leave Date From: {filing.leave_date_from}
+            <br></br>
+            Leave Date To: {filing.leave_date_to}
+            <br></br>
+            Remarks: {filing.remarks}
+            <br></br>
+            Status: {filing.status}
           </DialogContentText>
           <TextField
             autoFocus
