@@ -6,17 +6,16 @@ from accounts.models import UserAccount
 from .models import Filing, LeaveType, Approval
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import F
+from django.db.models import F, Q
 
 # Create your views here.
 
 
-class FilingView(APIView):
+class ListFilingView(APIView):
     serializer_class = FilingSerializer
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
-        data = self.request.GET.get("status")
         try:
             user = UserAccount.objects.get(pk=int(request.user.id))
             group = request.user.groups.all()[0].name
@@ -27,17 +26,22 @@ class FilingView(APIView):
                 )
             elif group == "Middle Manager":
                 try:
-                    if data == "pending":
-                        queryset = Filing.objects.filter(
-                            approval__approver=user.email,
-                            status="1",
-                        )
+                    # Get all filing from the user and the user being the approver
+                    queryset = Filing.objects.filter(
+                        Q(approval__approver=user.email) | Q(user=user),
+                        status="1",
+                    )
                 except:
                     return Response({"error": "No data found"})
             filings = FilingSerializer(queryset, many=True)
         except BaseException as e:
             return Response({"error": e})
         return Response(filings.data)
+
+
+class FilingView(APIView):
+    serializer_class = FilingSerializer
+    permission_classes = (IsAuthenticated,)
 
     def put(self, request, pk, format=None):
         data = self.request.data

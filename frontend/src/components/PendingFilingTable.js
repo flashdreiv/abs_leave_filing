@@ -23,6 +23,7 @@ export default function PendingFilingTable() {
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
+    { field: "requestedby", headerName: "Requested By", width: 150 },
     { field: "leave_type", headerName: "Leave Type", width: 150 },
     { field: "day_type", headerName: "Total Days", width: 120 },
     { field: "leave_date_from", headerName: "Start Date", width: 120 },
@@ -35,6 +36,7 @@ export default function PendingFilingTable() {
   const [dialog, setDialog] = useState(false);
   const dispatch = useDispatch();
   const { userFilingList } = useSelector((state) => state.leaveFile);
+  const { userInfo } = useSelector((state) => state.userLogin);
   //Default modal value for editing
   const [filing, setFiling] = useState("");
 
@@ -57,23 +59,28 @@ export default function PendingFilingTable() {
     <div
       style={{
         height: 700,
-        width: "45%",
+        width: "50%",
         display: "flex",
       }}
     >
       {userFilingList &&
         userFilingList.map((filing) => {
-          rows.push({
-            id: filing.id,
-            requestedby: filing.user,
-            leave_type: filing.leave_type,
-            day_type: filing.day_type,
-            leave_date_from: filing.leave_date_from,
-            leave_date_to: filing.leave_date_to,
-            remarks: filing.remarks,
-            //Design with Chip
-            status: filing.status,
-          });
+          //Check if its the pending filing for other user
+          let user =
+            typeof userInfo === "string" ? JSON.parse(userInfo) : userInfo;
+          if (user.email !== filing.user) {
+            rows.push({
+              id: filing.id,
+              requestedby: filing.user,
+              leave_type: filing.leave_type,
+              day_type: filing.day_type,
+              leave_date_from: filing.leave_date_from,
+              leave_date_to: filing.leave_date_to,
+              remarks: filing.remarks,
+              //Design with Chip
+              status: filing.status,
+            });
+          }
         })}
 
       <FilingDetailDialog

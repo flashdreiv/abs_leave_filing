@@ -1,8 +1,9 @@
 from django.urls import path, include, re_path
-from .views import FilingView, LeaveTypeView, ApprovalView
+from .views import FilingView, LeaveTypeView, ApprovalView, ListFilingView
 
 urlpatterns = [
-    path("", FilingView.as_view(), name="list-filing"),
+    path("", ListFilingView.as_view(), name="list-filing"),
+    path("add/", FilingView.as_view(), name="add-filing"),
     path("<int:pk>", FilingView.as_view(), name="list-filing"),
     path("leaves/", LeaveTypeView.as_view(), name="list-leave-types"),
     path("approvals/<int:pk>", ApprovalView.as_view(), name="approve-leave"),

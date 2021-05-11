@@ -15,41 +15,37 @@ import {
 } from "../constants/LeaveFilingConstants";
 
 //Insert Leave
-export const fileLeave = (
-  leave_type,
-  day_type,
-  leave_date_from,
-  leave_date_to,
-  remarks
-) => async (dispatch) => {
-  try {
-    dispatch({
-      type: USER_FILING_REQUEST,
-    });
+export const fileLeave =
+  (leave_type, day_type, leave_date_from, leave_date_to, remarks) =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: USER_FILING_REQUEST,
+      });
 
-    let filingInfo = {
-      leave_type,
-      day_type,
-      leave_date_from,
-      leave_date_to,
-      remarks,
-    };
-    const { data } = await axiosActions[0].post("filings/", filingInfo);
+      let filingInfo = {
+        leave_type,
+        day_type,
+        leave_date_from,
+        leave_date_to,
+        remarks,
+      };
+      const { data } = await axiosActions[0].post("filings/add/", filingInfo);
 
-    dispatch({
-      type: USER_FILING_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: USER_FILING_FAIL,
-      payload:
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message,
-    });
-  }
-};
+      dispatch({
+        type: USER_FILING_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: USER_FILING_FAIL,
+        payload:
+          error.response && error.response.data.detail
+            ? error.response.data.detail
+            : error.message,
+      });
+    }
+  };
 //Get listings of leave
 export const listLeave = (listType) => async (dispatch) => {
   try {
@@ -80,42 +76,40 @@ export const listLeave = (listType) => async (dispatch) => {
 };
 
 //Edit leave
-export const editLeave = (
-  leaveID,
-  leave_type,
-  day_type,
-  leave_date_from,
-  leave_date_to,
-  remarks
-) => async (dispatch) => {
-  try {
-    dispatch({
-      type: USER_EDIT_FILING_REQUEST,
-    });
-    let editInfo = {
-      leave_type,
-      day_type,
-      leave_date_from,
-      leave_date_to,
-      remarks,
-    };
-    const { data } = await axiosActions[0].put(`filings/${leaveID}`, editInfo);
-    console.log(data);
+export const editLeave =
+  (leaveID, leave_type, day_type, leave_date_from, leave_date_to, remarks) =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: USER_EDIT_FILING_REQUEST,
+      });
+      let editInfo = {
+        leave_type,
+        day_type,
+        leave_date_from,
+        leave_date_to,
+        remarks,
+      };
+      const { data } = await axiosActions[0].put(
+        `filings/${leaveID}`,
+        editInfo
+      );
+      console.log(data);
 
-    dispatch({
-      type: USER_EDIT_FILING_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: USER_EDIT_FILING_FAIL,
-      payload:
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message,
-    });
-  }
-};
+      dispatch({
+        type: USER_EDIT_FILING_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: USER_EDIT_FILING_FAIL,
+        payload:
+          error.response && error.response.data.detail
+            ? error.response.data.detail
+            : error.message,
+      });
+    }
+  };
 
 //Delete leave
 export const deleteLeave = (id) => async (dispatch) => {

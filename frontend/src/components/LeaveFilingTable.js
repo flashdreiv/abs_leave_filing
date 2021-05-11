@@ -86,6 +86,7 @@ export default function LeaveFilingTable({
   const [dialog, setDialog] = useState(false);
   const dispatch = useDispatch();
   const { userFilingList } = useSelector((state) => state.leaveFile);
+  const { userInfo } = useSelector((state) => state.userLogin);
   //Default modal value for editing
   const [filing, setFiling] = useState("");
 
@@ -130,17 +131,21 @@ export default function LeaveFilingTable({
     >
       {userFilingList &&
         userFilingList.map((filing) => {
-          rows.push({
-            id: filing.id,
-            requestedby: filing.user,
-            leave_type: filing.leave_type,
-            day_type: filing.day_type,
-            leave_date_from: filing.leave_date_from,
-            leave_date_to: filing.leave_date_to,
-            remarks: filing.remarks,
-            //Design with Chip
-            status: filing.status,
-          });
+          let user =
+            typeof userInfo === "string" ? JSON.parse(userInfo) : userInfo;
+          if (user.email === filing.user) {
+            rows.push({
+              id: filing.id,
+              requestedby: filing.user,
+              leave_type: filing.leave_type,
+              day_type: filing.day_type,
+              leave_date_from: filing.leave_date_from,
+              leave_date_to: filing.leave_date_to,
+              remarks: filing.remarks,
+              //Design with Chip
+              status: filing.status,
+            });
+          }
         })}
       {userType === "admin" ? (
         <FilingDetailDialog

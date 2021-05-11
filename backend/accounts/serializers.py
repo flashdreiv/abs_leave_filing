@@ -7,5 +7,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
 
         data["is_superuser"] = self.user.is_superuser
+        data["email"] = self.user.email
 
         return data
