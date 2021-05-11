@@ -124,7 +124,7 @@ export default function LeaveFilingTable({
     <div
       style={{
         height: 700,
-        width: "65%",
+        width: "55%",
         display: "flex",
       }}
     >

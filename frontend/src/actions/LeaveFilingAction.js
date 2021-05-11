@@ -59,7 +59,7 @@ export const listLeave = (listType) => async (dispatch) => {
 
     const { data } = await axiosActions[0].get("filings/", {
       params: {
-        leave_type_status: listType,
+        status: listType,
       },
     });
     localStorage.setItem("filing_list", JSON.stringify(data));
@@ -78,6 +78,7 @@ export const listLeave = (listType) => async (dispatch) => {
     });
   }
 };
+
 //Edit leave
 export const editLeave = (
   leaveID,
