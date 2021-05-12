@@ -24,7 +24,7 @@ class ListFilingView(APIView):
                 queryset = Filing.objects.filter(
                     approval__approver=user.email, status="1"
                 )
-            elif group == "Middle Manager":
+            elif group == "Middle Manager" or group == "Human Resource":
                 try:
                     # Get all filing from the user and the user being the approver
                     queryset = Filing.objects.filter(
@@ -37,6 +37,51 @@ class ListFilingView(APIView):
         except BaseException as e:
             return Response({"error": e})
         return Response(filings.data)
+
+
+class AddFilingView(APIView):
+    def post(self, request):
+        data = self.request.data
+
+        user = request.user
+        leave_type = data["leave_type"]
+        day_type = data["day_type"]
+        leave_date_from = data["leave_date_from"]
+        leave_date_to = data["leave_date_to"]
+        remarks = data["remarks"]
+
+        try:
+            for leave, leaveString in enumerate(LeaveType.leave_type_choices):
+                print(user)
+                if leaveString[1] == leave_type:
+                    leave_type = leaveString[0]
+                else:
+                    leave_type = LeaveType.leave_type_choices[0][0]
+            leave_type = LeaveType.objects.get(user=user)
+            Filing.objects.create(
+                user=user,
+                leave_type=leave_type,
+                day_type=day_type,
+                remarks=remarks,
+                leave_date_from=leave_date_from,
+                leave_date_to=leave_date_to,
+            )
+            if leave_type.leave_credits < 1:
+                return Response(
+                    {"error": "You don't have sufficient leave credits for that type"}
+                )
+            # else:
+            #     if day_type == 1 or day_type == 2:
+            #         leave_type.leave_credits = F("leave_credits") - 0.5
+
+            #     elif day_type == 3:
+            #         leave_type.leave_credits = F("leave_credits") - 1
+
+            leave_type.save()
+            return Response({"success": "Leave filing creation created"})
+        except BaseException as e:
+            print(e)
+            return Response({"error": "Failed creating leave filing"})
 
 
 class FilingView(APIView):
@@ -79,48 +124,6 @@ class FilingView(APIView):
             return Response({"Success": "delete success"})
         except BaseException as e:
             return Response({"error": e})
-
-    def post(self, request):
-        data = self.request.data
-
-        user_id = int(request.user.id)
-        leave_type = data["leave_type"]
-        day_type = data["day_type"]
-        leave_date_from = data["leave_date_from"]
-        leave_date_to = data["leave_date_to"]
-        remarks = data["remarks"]
-
-        try:
-            for leave, leaveString in enumerate(LeaveType.leave_type_choices):
-                if leaveString[1] == leave_type:
-                    leave_type = leaveString[0]
-                else:
-                    leave_type = LeaveType.leave_type_choices[0][0]
-            leave_type = LeaveType.objects.get(user__id=user_id, leave_type=leave_type)
-            Filing.objects.create(
-                user=request.user,
-                leave_type=leave_type,
-                day_type=day_type,
-                remarks=remarks,
-                leave_date_from=leave_date_from,
-                leave_date_to=leave_date_to,
-            )
-            if leave_type.leave_credits < 1:
-                return Response(
-                    {"error": "You don't have sufficient leave credits for that type"}
-                )
-            # else:
-            #     if day_type == 1 or day_type == 2:
-            #         leave_type.leave_credits = F("leave_credits") - 0.5
-
-            #     elif day_type == 3:
-            #         leave_type.leave_credits = F("leave_credits") - 1
-
-            leave_type.save()
-            return Response({"success": "Leave filing creation created"})
-        except BaseException as e:
-            print(e)
-            return Response({"error": "Failed creating leave filing"})
 
 
 class LeaveTypeView(APIView):

@@ -35,7 +35,7 @@ export default function PendingFilingTable() {
   const classes = useStyles();
   const [dialog, setDialog] = useState(false);
   const dispatch = useDispatch();
-  const { userFilingList } = useSelector((state) => state.leaveFile);
+  const { userFilingList } = useSelector((state) => state.userFilingList);
   const { userInfo } = useSelector((state) => state.userLogin);
   //Default modal value for editing
   const [filing, setFiling] = useState("");

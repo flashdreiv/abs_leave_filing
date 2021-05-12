@@ -4,7 +4,9 @@ import {
   USER_FILING_REQUEST,
   USER_FILING_SUCCESS,
   USER_FILING_FAIL,
-  USER_FILING_LIST,
+  USER_FILING_LIST_REQUEST,
+  USER_FILING_LIST_SUCCESS,
+  USER_FILING_LIST_FAIL,
   USER_EDIT_FILING_REQUEST,
   USER_EDIT_FILING_SUCCESS,
   USER_EDIT_FILING_FAIL,
@@ -30,7 +32,7 @@ export const fileLeave =
         leave_date_to,
         remarks,
       };
-      const { data } = await axiosActions[0].post("filings/add/", filingInfo);
+      const { data } = await axiosActions[0].post("filings/add", filingInfo);
 
       dispatch({
         type: USER_FILING_SUCCESS,
@@ -50,23 +52,19 @@ export const fileLeave =
 export const listLeave = (listType) => async (dispatch) => {
   try {
     dispatch({
-      type: USER_FILING_REQUEST,
+      type: USER_FILING_LIST_REQUEST,
     });
 
-    const { data } = await axiosActions[0].get("filings/", {
-      params: {
-        status: listType,
-      },
-    });
+    const { data } = await axiosActions[0].get("filings/");
     localStorage.setItem("filing_list", JSON.stringify(data));
 
     dispatch({
-      type: USER_FILING_LIST,
+      type: USER_FILING_LIST_SUCCESS,
       payload: data,
     });
   } catch (error) {
     dispatch({
-      type: USER_FILING_FAIL,
+      type: USER_FILING_LIST_FAIL,
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail

@@ -3,6 +3,7 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { userLoginReducer, userSignupReducer } from "./reducers/userReducers";
 import {
+  ListFilingReducer,
   LeaveFilingReducer,
   ApproveLeaveReducer,
 } from "./reducers/LeaveFilingReducer";
@@ -12,6 +13,7 @@ const reducer = combineReducers({
   userSignup: userSignupReducer,
   userLogout: userLoginReducer,
   leaveFile: LeaveFilingReducer,
+  userFilingList: ListFilingReducer,
   approveLeave: ApproveLeaveReducer,
 });
 
@@ -22,7 +24,7 @@ const userFilingListFromStorage = JSON.parse(
 
 const initialState = {
   userLogin: { userInfo: userInfoFromStorage },
-  leaveFile: { userFilingList: userFilingListFromStorage },
+  userFilingList: { userFilingList: userFilingListFromStorage },
 };
 const middleware = [thunk];
 const store = createStore(
