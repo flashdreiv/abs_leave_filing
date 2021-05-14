@@ -47,7 +47,7 @@ export default function PendingFilingTable() {
 
   //Use effect
   useEffect(() => {
-    dispatch(listLeave("pending"));
+    // dispatch(listLeave());
   }, [filingInfo, dispatch, approvalStatus]);
 
   const modalAction = (newSelection) => {

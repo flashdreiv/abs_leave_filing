@@ -49,7 +49,7 @@ export const fileLeave =
     }
   };
 //Get listings of leave
-export const listLeave = (listType) => async (dispatch) => {
+export const listLeave = () => async (dispatch) => {
   try {
     dispatch({
       type: USER_FILING_LIST_REQUEST,

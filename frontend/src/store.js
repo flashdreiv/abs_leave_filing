@@ -18,13 +18,11 @@ const reducer = combineReducers({
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo");
-const userFilingListFromStorage = JSON.parse(
-  localStorage.getItem("filing_list")
-);
+// const userFilingListFromStorage = localStorage.getItem("filing_list");
 
 const initialState = {
   userLogin: { userInfo: userInfoFromStorage },
-  userFilingList: { userFilingList: userFilingListFromStorage },
+  // userFilingList: { userFilingList: userFilingListFromStorage },
 };
 const middleware = [thunk];
 const store = createStore(

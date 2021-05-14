@@ -22,9 +22,6 @@ export const LeaveFilingReducer = (state = {}, action) => {
     case USER_FILING_SUCCESS:
       return { loading: false, filingInfo: action.payload };
 
-    case USER_FILING_LIST_SUCCESS:
-      return { loading: false, userFilingList: action.payload };
-
     case USER_DELETE_FILING:
       return { loading: false, filingInfo: action.payload };
 

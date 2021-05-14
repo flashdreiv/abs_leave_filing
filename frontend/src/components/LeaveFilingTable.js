@@ -134,6 +134,7 @@ export default function LeaveFilingTable({
           let user =
             typeof userInfo === "string" ? JSON.parse(userInfo) : userInfo;
           if (user.email === filing.user) {
+            console.log(filing);
             rows.push({
               id: filing.id,
               requestedby: filing.user,
