@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .serializers import FilingSerializer, LeaveTypeSerializer, ApprovalSerializer
+from .serializers import FilingSerializer, LeaveTypeSerializer
 from accounts.models import UserAccount
-from .models import Filing, LeaveType, Approval
+from .models import Filing, LeaveType
+from approvals.models import Approval
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import F, Q
@@ -70,12 +71,6 @@ class AddFilingView(APIView):
                 return Response(
                     {"error": "You don't have sufficient leave credits for that type"}
                 )
-            # else:
-            #     if day_type == 1 or day_type == 2:
-            #         leave_type.leave_credits = F("leave_credits") - 0.5
-
-            #     elif day_type == 3:
-            #         leave_type.leave_credits = F("leave_credits") - 1
 
             leave_type.save()
             return Response({"success": "Leave filing creation created"})
@@ -84,16 +79,30 @@ class AddFilingView(APIView):
             return Response({"error": "Failed creating leave filing"})
 
 
-class FilingView(APIView):
+class DeleteFilingView(APIView):
+    serializer_class = FilingSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def delete(self, request, pk, format=None):
+        try:
+            user_id = int(request.user.id)
+            filing = Filing.objects.get(user__id=user_id, pk=pk)
+            filing.delete()
+            return Response({"Success": "delete success"})
+        except BaseException as e:
+            return Response({"error": "Delete Failed"})
+
+
+class UpdateFilingView(APIView):
     serializer_class = FilingSerializer
     permission_classes = (IsAuthenticated,)
 
     def put(self, request, pk, format=None):
         data = self.request.data
-
         try:
             user_id = int(request.user.id)
             leave_type = data["leave_type"]
+
             filing = Filing.objects.get(pk=pk, user__id=user_id)
             for leave, leaveString in enumerate(LeaveType.leave_type_choices):
                 if leaveString[1] == leave_type:
@@ -108,22 +117,7 @@ class FilingView(APIView):
             return Response({"success": "Update successful"})
 
         except BaseException as e:
-            return Response({"error": e})
-
-    def delete(self, request, pk, format=None):
-        try:
-            user_id = int(request.user.id)
-            filing = Filing.objects.get(user__id=user_id, pk=pk)
-            # if filing.status == "1":
-            #     if filing.day_type == "1" or filing.day_type == "2":
-            #         filing.leave_type.leave_credits = F("leave_credits") + 0.5
-            #     elif filing.day_type == "3":
-            #         filing.leave_type.leave_credits = F("leave_credits") + 1
-            #     filing.leave_type.save()
-            filing.delete()
-            return Response({"Success": "delete success"})
-        except BaseException as e:
-            return Response({"error": e})
+            return Response({"error": "Update were not successful"})
 
 
 class LeaveTypeView(APIView):
@@ -139,59 +133,3 @@ class LeaveTypeView(APIView):
             return Response({"error": e})
 
         return Response(leaveType.data)
-
-
-class ApprovalView(APIView):
-    serializer_class = ApprovalSerializer
-    permission_classes = (IsAuthenticated,)
-
-    def post(self, request, pk, format=None):
-        data = self.request.data
-        try:
-            filing = Filing.objects.get(id=pk)
-            queryset = Approval.objects.get(
-                filing=filing, approver=request.user.email, status="1"
-            )
-            queryset.status = data["approved"]
-            queryset.filing.status = data["approved"]
-
-            if queryset.status == "2":
-                # Check daytype to decrement leave credits
-                if queryset.filing.day_type == "3":
-                    queryset.filing.leave_type.leave_credits = F("leave_credits") - 1
-                    try:
-                        if queryset.level == 0:
-                            Approval.objects.create(
-                                filing=filing, level=1, approver="drei@gmail.com"
-                            )
-                            print("shit test")
-                        elif queryset.level == 1:
-                            Approval.objects.create(
-                                filing=filing, level=2, approver="drei@gmail.com"
-                            )
-                    except BaseException as e:
-                        print(e)
-                else:
-                    queryset.filing.leave_type.leave_credits = F("leave_credits") - 0.5
-                    try:
-                        if queryset.level == 0:
-                            Approval.objects.create(
-                                filing=filing, level=1, approver="drei@gmail.com"
-                            )
-                            print("shit test")
-                        elif queryset.level == 1:
-                            Approval.objects.create(
-                                filing=filing, level=2, approver="drei@gmail.com"
-                            )
-                    except BaseException as e:
-                        print(e)
-            queryset.remarks = data["remarks"]
-            queryset.filing.leave_type.save()
-            queryset.filing.save()
-            queryset.save()
-            approval = ApprovalSerializer(queryset)
-            return Response({"success": "Successfully approved"})
-        except BaseException as e:
-            return Response({"error": "Approval Error"})
-
-        return Response(approval.data)

@@ -1,7 +1,7 @@
-import { React, useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "../actions/userAction";
-import AuthForm from "./AuthForm";
+import { React, useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../actions/userAction';
+import AuthForm from './AuthForm';
 
 const Login = ({ history }) => {
   const [email, setEmail] = useState([]);
@@ -12,12 +12,12 @@ const Login = ({ history }) => {
   useEffect(() => {
     try {
       if (!userInfo.is_superuser) {
-        history.push("/employee");
+        history.push('/employee');
       } else {
-        history.push("/admin");
+        history.push('/admin');
       }
     } catch {
-      history.push("/");
+      history.push('/');
     }
   }, [history, userInfo]);
 

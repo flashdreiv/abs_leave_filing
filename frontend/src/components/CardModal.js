@@ -1,46 +1,45 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { fileLeave, editLeave } from "../actions/LeaveFilingAction";
-import { format } from "date-fns";
-import axiosActions from "../axiosApi";
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { fileLeave, editLeave } from '../actions/LeaveFilingAction';
+import { format } from 'date-fns';
+import axiosActions from '../axiosApi';
 //Material UI
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import FormControl from "@material-ui/core/FormControl";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import DateFnsUtils from "@date-io/date-fns";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
-import { Typography } from "@material-ui/core";
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import InputLabel from '@material-ui/core/InputLabel';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import FormControl from '@material-ui/core/FormControl';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
+import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
+import DatePicker from '@material-ui/lab/DatePicker';
+
+import { Typography } from '@material-ui/core';
 
 const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
-  let today = format(new Date(), "yyyy-MM-dd");
+  let today = format(new Date(), 'yyyy-MM-dd');
 
   const dispatch = useDispatch();
 
-  const [dayType, setdayType] = useState("Whole day");
+  const [dayType, setdayType] = useState('Whole day');
   const [leaveTypes, setLeaveTypes] = useState([]);
   const [leave, setLeave] = useState();
   const [leaveDateFrom, setleaveDateFrom] = useState(today);
   const [leaveDateTo, setleaveDateTo] = useState(today);
-  const [remarks, setRemarks] = useState("");
+  const [remarks, setRemarks] = useState('');
 
   useEffect(() => {
     async function fetchData() {
-      const { data } = await axiosActions[0].get("filings/leaves/");
+      const { data } = await axiosActions[0].get('filings/leaves/');
       setLeaveTypes(data);
     }
     fetchData();
     //Set default value when editing
-    if (BtnAction === "edit") {
+    if (BtnAction === 'edit') {
       setLeave(filing.leave_type);
       setdayType(filing.day_type);
       setleaveDateFrom(filing.leave_date_from);
@@ -53,12 +52,12 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
     e.preventDefault();
 
     switch (BtnAction) {
-      case "add":
+      case 'add':
         dispatch(
           fileLeave(leave, dayType, leaveDateFrom, leaveDateTo, remarks)
         );
         break;
-      case "edit":
+      case 'edit':
         dispatch(
           editLeave(
             filing.id,
@@ -90,9 +89,9 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
           <form
             onSubmit={handleSubmit}
             style={{
-              display: "flex",
-              flexDirection: "column",
-              marginBottom: 30,
+              display: 'flex',
+              flexDirection: 'column',
+              marginBottom: 30
             }}
           >
             <FormControl>
@@ -123,9 +122,9 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
                 value={dayType}
                 onChange={(e) => setdayType(e.target.value)}
               >
-                <MenuItem value={"First Half"}>First Half</MenuItem>
-                <MenuItem value={"Second Half"}>Second Half</MenuItem>
-                <MenuItem value={"Whole day"}>Whole Day</MenuItem>
+                <MenuItem value={'First Half'}>First Half</MenuItem>
+                <MenuItem value={'Second Half'}>Second Half</MenuItem>
+                <MenuItem value={'Whole day'}>Whole Day</MenuItem>
               </Select>
               {leaveTypes &&
                 leaveTypes.map((type) => {
@@ -134,12 +133,12 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
                       Leave Credits: {type.leave_credits}
                     </Typography>
                   ) : (
-                    ""
+                    ''
                   );
                 })}
 
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
                   autoOk={true}
                   disableToolbar
                   variant="inline"
@@ -149,12 +148,12 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
                   label="Date From"
                   required
                   value={leaveDateFrom}
-                  onChange={(e) => setleaveDateFrom(format(e, "yyyy-MM-dd"))}
-                  KeyboardButtonProps={{
-                    "aria-label": "change date",
+                  onChange={(e) => setleaveDateFrom(format(e, 'yyyy-MM-dd'))}
+                  ButtonProps={{
+                    'aria-label': 'change date'
                   }}
                 />
-                <KeyboardDatePicker
+                <DatePicker
                   autoOk={true}
                   disableToolbar
                   variant="inline"
@@ -164,9 +163,9 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
                   label="Date To"
                   required
                   value={leaveDateTo}
-                  onChange={(e) => setleaveDateTo(format(e, "yyyy-MM-dd"))}
-                  KeyboardButtonProps={{
-                    "aria-label": "change date",
+                  onChange={(e) => setleaveDateTo(format(e, 'yyyy-MM-dd'))}
+                  ButtonProps={{
+                    'aria-label': 'change date'
                   }}
                 />
                 <TextField
@@ -178,7 +177,7 @@ const CardModal = ({ modalState, handleClose, filing, BtnAction }) => {
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
                 />
-              </MuiPickersUtilsProvider>
+              </LocalizationProvider>
               <DialogActions>
                 <Button onClick={handleClose} color="primary">
                   Cancel

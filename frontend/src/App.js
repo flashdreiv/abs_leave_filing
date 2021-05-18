@@ -1,41 +1,24 @@
-import { React } from "react";
+import 'react-perfect-scrollbar/dist/css/styles.css';
+import { useRoutes } from 'react-router-dom';
+import { ThemeProvider } from '@material-ui/core';
+import GlobalStyles from 'src/components/GlobalStyles';
+import 'src/mixins/chartjs';
+import theme from 'src/theme';
+import routes from 'src/routes';
 
-import Login from "./components/Login";
-import Admin from "./components/Admin";
-import Signup from "./components/Signup";
-import Employee from "./components/Employee";
-import PendingView from "./components/PendingApproval";
+import { useSelector } from 'react-redux';
 
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import RequireAuth from "./utils/requireAuth";
-import AdminOnly from "./utils/AdminOnly";
+const App = () => {
+  const { userInfo } = useSelector((state) => state.userLogin);
+  let user = typeof userInfo === 'string' ? JSON.parse(userInfo) : userInfo;
+  const routing = useRoutes(routes(user));
 
-function App() {
   return (
-    <div className="App">
-      <Router>
-        <Switch>
-          <Route path="/" exact component={Login} />
-          <Route
-            path="/admin"
-            exact
-            component={(props) => <AdminOnly Component={Admin} />}
-          />
-          <Route
-            path="/employee"
-            exact
-            component={(props) => <RequireAuth Component={Employee} />}
-          />
-          <Route
-            path="/pending"
-            exact
-            component={(props) => <RequireAuth Component={PendingView} />}
-          />
-          <Route path="/signup" exact component={Signup} />
-        </Switch>
-      </Router>
-    </div>
+    <ThemeProvider theme={theme}>
+      <GlobalStyles />
+      {routing}
+    </ThemeProvider>
   );
-}
+};
 
 export default App;

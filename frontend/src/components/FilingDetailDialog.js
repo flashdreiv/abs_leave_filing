@@ -1,27 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 //Material UI
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import TextField from "@material-ui/core/TextField";
-import { approveLeave } from "../actions/LeaveFilingAction";
-import { Typography } from "@material-ui/core";
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
+import { approveLeave } from '../actions/LeaveFilingAction';
+import moment from 'moment';
 
-export default function AlertDialog({ dialog, setDialog, title, filing }) {
+export default function FilingDetailDialog({
+  dialog,
+  setDialog,
+  title,
+  filing
+}) {
   const dispatch = useDispatch();
 
-  const [remarks, setRemarks] = useState("");
+  const [remarks, setRemarks] = useState('');
 
   const handleApprove = () => {
-    dispatch(approveLeave(filing.id, "2", remarks));
+    dispatch(approveLeave(filing.id, '2', remarks));
     setDialog(false);
   };
   const handleReject = () => {
-    dispatch(approveLeave(filing.id, "3", remarks));
+    dispatch(approveLeave(filing.id, '3', remarks));
     setDialog(false);
   };
 
@@ -42,9 +47,10 @@ export default function AlertDialog({ dialog, setDialog, title, filing }) {
             <br></br>
             Day Type: {filing.day_type}
             <br></br>
-            Leave Date From: {filing.leave_date_from}
+            Leave Date From:{' '}
+            {moment(filing.leave_date_from).format('DD/MM/YYYY')}
             <br></br>
-            Leave Date To: {filing.leave_date_to}
+            Leave Date To: {moment(filing.leave_date_to).format('DD/MM/YYYY')}
             <br></br>
             Remarks: {filing.remarks}
             <br></br>

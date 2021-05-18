@@ -1,55 +1,55 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteLeave, listLeave } from "../actions/LeaveFilingAction";
-import FilingDetailDialog from "./FilingDetailDialog";
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteLeave, listLeave } from '../actions/LeaveFilingAction';
+import FilingDetailDialog from './FilingDetailDialog';
 //Material UI
-import { DataGrid } from "@material-ui/data-grid";
-import Button from "@material-ui/core/Button";
-import AddIcon from "@material-ui/icons/Add";
-import Fab from "@material-ui/core/Fab";
-import { makeStyles } from "@material-ui/core/styles";
-import AlertDialog from "./AlertDialog";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Chip from "@material-ui/core/Chip";
+import { DataGrid } from '@material-ui/data-grid';
+import Button from '@material-ui/core/Button';
+import AddIcon from '@material-ui/icons/Add';
+import Fab from '@material-ui/core/Fab';
+import { makeStyles } from '@material-ui/core/styles';
+import AlertDialog from './AlertDialog';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Chip from '@material-ui/core/Chip';
 
 const useStyles = makeStyles((theme) => ({
   fabStyle: {
     margin: 0,
-    top: "auto",
+    top: 'auto',
     right: 20,
     bottom: 20,
-    left: "auto",
-    position: "fixed",
-  },
+    left: 'auto',
+    position: 'fixed'
+  }
 }));
 
 export default function LeaveFilingTable({
   tableType,
   CardModal,
   userType,
-  columns,
+  columns
 }) {
   const rows = [];
 
   const employeeColumns = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "leave_type", headerName: "Leave Type", width: 150 },
-    { field: "day_type", headerName: "Total Days", width: 120 },
-    { field: "leave_date_from", headerName: "Start Date", width: 120 },
-    { field: "leave_date_to", headerName: "End Date", width: 120 },
-    { field: "remarks", headerName: "Remarks", width: 120 },
-    { field: "status", headerName: "Status", width: 100 },
+    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'leave_type', headerName: 'Leave Type', width: 150 },
+    { field: 'day_type', headerName: 'Total Days', width: 120 },
+    { field: 'leave_date_from', headerName: 'Start Date', width: 120 },
+    { field: 'leave_date_to', headerName: 'End Date', width: 120 },
+    { field: 'remarks', headerName: 'Remarks', width: 120 },
+    { field: 'status', headerName: 'Status', width: 100 },
 
     {
-      field: "Edit",
-      headerName: "Edit",
+      field: 'Edit',
+      headerName: 'Edit',
       renderCell: () => {
         return (
           <Button
             onClick={() => {
               setFiling(userFilingList.find((x) => x.id === filing.id));
               setModalState(true);
-              setBtnAction("edit");
+              setBtnAction('edit');
             }}
             size="small"
             color="primary"
@@ -59,11 +59,11 @@ export default function LeaveFilingTable({
           </Button>
         );
       },
-      width: 100,
+      width: 100
     },
     {
-      field: "Delete",
-      headerName: "Delete",
+      field: 'Delete',
+      headerName: 'Delete',
       renderCell: () => {
         return (
           <AlertDialog
@@ -75,23 +75,23 @@ export default function LeaveFilingTable({
           />
         );
       },
-      width: 100,
-    },
+      width: 100
+    }
   ];
   //------Above is table Data-----//
   const classes = useStyles();
   //Check if admin to change columns
-  columns = userType === "admin" ? columns : employeeColumns;
+  columns = userType === 'admin' ? columns : employeeColumns;
   const [modalState, setModalState] = useState(false);
   const [dialog, setDialog] = useState(false);
   const dispatch = useDispatch();
   const { userFilingList } = useSelector((state) => state.userFilingList);
   const { userInfo } = useSelector((state) => state.userLogin);
   //Default modal value for editing
-  const [filing, setFiling] = useState("");
+  const [filing, setFiling] = useState('');
 
   const { filingInfo } = useSelector((state) => state.leaveFile);
-  const [BtnAction, setBtnAction] = useState("");
+  const [BtnAction, setBtnAction] = useState('');
 
   //Approval status state
   const { approvalStatus } = useSelector((state) => state.approveLeave);
@@ -108,12 +108,12 @@ export default function LeaveFilingTable({
   //Delete Function for Filing
   const deleteButtonHandle = (id) => {
     dispatch(deleteLeave(id));
-    console.log("delete");
+    console.log('delete');
   };
 
   const modalAction = (newSelection) => {
-    if (userType === "admin") {
-      setBtnAction("adminView");
+    if (userType === 'admin') {
+      setBtnAction('adminView');
       setFiling(newSelection.data);
       setDialog(true);
     } else {
@@ -125,14 +125,14 @@ export default function LeaveFilingTable({
     <div
       style={{
         height: 700,
-        width: "55%",
-        display: "flex",
+        width: '55%',
+        display: 'flex'
       }}
     >
       {userFilingList &&
         userFilingList.map((filing) => {
           let user =
-            typeof userInfo === "string" ? JSON.parse(userInfo) : userInfo;
+            typeof userInfo === 'string' ? JSON.parse(userInfo) : userInfo;
           if (user.email === filing.user) {
             console.log(filing);
             rows.push({
@@ -144,11 +144,11 @@ export default function LeaveFilingTable({
               leave_date_to: filing.leave_date_to,
               remarks: filing.remarks,
               //Design with Chip
-              status: filing.status,
+              status: filing.status
             });
           }
         })}
-      {userType === "admin" ? (
+      {userType === 'admin' ? (
         <FilingDetailDialog
           dialog={dialog}
           setDialog={setDialog}
@@ -166,7 +166,7 @@ export default function LeaveFilingTable({
           <Fab
             onClick={() => {
               setModalState(true);
-              setBtnAction("add");
+              setBtnAction('add');
             }}
             color="primary"
             className={classes.fabStyle}
@@ -186,7 +186,7 @@ export default function LeaveFilingTable({
           pageSize={5}
         />
       ) : (
-        <CircularProgress style={{ marginLeft: "50%" }} />
+        <CircularProgress style={{ marginLeft: '50%' }} />
       )}
     </div>
   );

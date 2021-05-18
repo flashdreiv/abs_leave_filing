@@ -2,6 +2,8 @@ from django.db import models
 from accounts.models import UserAccount
 from multiselectfield import MultiSelectField
 from django.db.models.signals import post_save
+from approvals.models import Approval
+
 
 # Create your models here.
 
@@ -54,18 +56,26 @@ class Filing(models.Model):
 
 def create_approval(sender, instance, created, **kwargs):
     if created:
-        Approval.objects.create(filing=instance, level=0)
+        try:
+            group = instance.user.groups.all()[0]
+            approver_email = UserAccount.objects.get(
+                groups__name="Human Resource"
+            ).email
+            if group.name != "Employee":
+                Approval.objects.create(
+                    filing=instance,
+                    level=0,
+                    approver=approver_email,
+                )
+
+            else:
+                Approval.objects.create(
+                    filing=instance,
+                    level=0,
+                    approver=instance.user.department_set.all()[0].department_head,
+                )
+        except:
+            pass
 
 
 post_save.connect(create_approval, sender=Filing)
-
-
-class Approval(models.Model):
-    filing = models.ForeignKey(Filing, on_delete=models.CASCADE, null=True, blank=True)
-    level = models.SmallIntegerField(default=0)
-    approver = models.EmailField(null=True, blank=True)
-    status = models.CharField(choices=status_choice, max_length=10, default="1")
-    remarks = models.CharField(max_length=250, null=True, blank=True)
-
-    def __str__(self):
-        return self.filing.user.email

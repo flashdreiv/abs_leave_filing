@@ -1,4 +1,4 @@
-import axiosActions from "../axiosApi";
+import axiosActions from '../axiosApi';
 
 import {
   USER_FILING_REQUEST,
@@ -13,8 +13,8 @@ import {
   USER_DELETE_FILING,
   APPROVE_FILING_REQUEST,
   APPROVE_FILING_SUCCESS,
-  APPROVE_FILING_FAIL,
-} from "../constants/LeaveFilingConstants";
+  APPROVE_FILING_FAIL
+} from '../constants/LeaveFilingConstants';
 
 //Insert Leave
 export const fileLeave =
@@ -22,7 +22,7 @@ export const fileLeave =
   async (dispatch) => {
     try {
       dispatch({
-        type: USER_FILING_REQUEST,
+        type: USER_FILING_REQUEST
       });
 
       let filingInfo = {
@@ -30,13 +30,13 @@ export const fileLeave =
         day_type,
         leave_date_from,
         leave_date_to,
-        remarks,
+        remarks
       };
-      const { data } = await axiosActions[0].post("filings/add", filingInfo);
+      const { data } = await axiosActions[0].post('filings/add', filingInfo);
 
       dispatch({
         type: USER_FILING_SUCCESS,
-        payload: data,
+        payload: data
       });
     } catch (error) {
       dispatch({
@@ -44,7 +44,7 @@ export const fileLeave =
         payload:
           error.response && error.response.data.detail
             ? error.response.data.detail
-            : error.message,
+            : error.message
       });
     }
   };
@@ -52,15 +52,15 @@ export const fileLeave =
 export const listLeave = () => async (dispatch) => {
   try {
     dispatch({
-      type: USER_FILING_LIST_REQUEST,
+      type: USER_FILING_LIST_REQUEST
     });
 
-    const { data } = await axiosActions[0].get("filings/");
-    localStorage.setItem("filing_list", JSON.stringify(data));
+    const { data } = await axiosActions[0].get('filings/');
+    localStorage.setItem('filing_list', JSON.stringify(data));
 
     dispatch({
       type: USER_FILING_LIST_SUCCESS,
-      payload: data,
+      payload: data
     });
   } catch (error) {
     dispatch({
@@ -68,7 +68,7 @@ export const listLeave = () => async (dispatch) => {
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail
-          : error.message,
+          : error.message
     });
   }
 };
@@ -79,14 +79,14 @@ export const editLeave =
   async (dispatch) => {
     try {
       dispatch({
-        type: USER_EDIT_FILING_REQUEST,
+        type: USER_EDIT_FILING_REQUEST
       });
       let editInfo = {
         leave_type,
         day_type,
         leave_date_from,
         leave_date_to,
-        remarks,
+        remarks
       };
       const { data } = await axiosActions[0].put(
         `filings/${leaveID}`,
@@ -96,7 +96,7 @@ export const editLeave =
 
       dispatch({
         type: USER_EDIT_FILING_SUCCESS,
-        payload: data,
+        payload: data
       });
     } catch (error) {
       dispatch({
@@ -104,7 +104,7 @@ export const editLeave =
         payload:
           error.response && error.response.data.detail
             ? error.response.data.detail
-            : error.message,
+            : error.message
       });
     }
   };
@@ -113,13 +113,13 @@ export const editLeave =
 export const deleteLeave = (id) => async (dispatch) => {
   try {
     dispatch({
-      type: USER_FILING_REQUEST,
+      type: USER_FILING_REQUEST
     });
     const { data } = await axiosActions[0].delete(`filings/${id}`);
 
     dispatch({
       type: USER_DELETE_FILING,
-      payload: data,
+      payload: data
     });
   } catch (error) {
     dispatch({
@@ -127,7 +127,7 @@ export const deleteLeave = (id) => async (dispatch) => {
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail
-          : error.message,
+          : error.message
     });
   }
 };
@@ -136,7 +136,7 @@ export const deleteLeave = (id) => async (dispatch) => {
 export const approveLeave = (id, approved, remarks) => async (dispatch) => {
   try {
     dispatch({
-      type: APPROVE_FILING_REQUEST,
+      type: APPROVE_FILING_REQUEST
     });
     const approveInfo = { approved: approved, remarks: remarks };
     const { data } = await axiosActions[0].post(
@@ -146,7 +146,7 @@ export const approveLeave = (id, approved, remarks) => async (dispatch) => {
 
     dispatch({
       type: APPROVE_FILING_SUCCESS,
-      payload: data,
+      payload: data
     });
   } catch (error) {
     dispatch({
@@ -154,7 +154,7 @@ export const approveLeave = (id, approved, remarks) => async (dispatch) => {
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail
-          : error.message,
+          : error.message
     });
   }
 };

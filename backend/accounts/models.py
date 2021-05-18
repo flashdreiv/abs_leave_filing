@@ -16,7 +16,6 @@ class UserAccountManager(BaseUserManager):
 
         email = self.normalize_email(email)
         user = self.model(email=email)
-        group = models.ForeignKey(Group, on_delete=models.SET_NULL)
 
         user.set_password(password)
         user.save()
@@ -45,10 +44,10 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
 
 class Department(models.Model):
-    user_list = [(user.pk, user.email) for user in UserAccount.objects.all()]
-    staff = models.ManyToManyField(UserAccount)
-    department = models.CharField(max_length=100)
-    department_head = models.CharField(choices=user_list, max_length=150)
+    user_list = [(user.email, user.email) for user in UserAccount.objects.all()]
+    staff = models.ManyToManyField(UserAccount, blank=True)
+    name = models.CharField(max_length=100)
+    department_head = models.EmailField(choices=user_list, max_length=150)
 
     def __str__(self):
-        return self.department
+        return self.name
