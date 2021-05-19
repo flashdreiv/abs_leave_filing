@@ -9,6 +9,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
 
         data["email"] = self.user.email
+        data["group"] = self.user.groups.all()[0].name
 
         return data
 

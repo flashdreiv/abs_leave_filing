@@ -5,16 +5,16 @@ import { Formik } from 'formik';
 import {
   Box,
   Button,
-  Checkbox,
   Container,
-  FormHelperText,
   Link,
   TextField,
   Typography,
   Select,
   MenuItem,
   FormControl,
-  InputLabel
+  InputLabel,
+  Alert,
+  Snackbar
 } from '@material-ui/core';
 
 import { useEffect, useState } from 'react';
@@ -31,12 +31,18 @@ const Register = () => {
   const [password, setPassword] = useState([]);
   const [password2, setPassword2] = useState([]);
   const { userInfo } = useSelector((state) => state.userSignup);
+  const [snackbar, setSnackbar] = useState();
+  const [message, setMessage] = useState('');
 
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(signup(email, password, password2));
+  };
+
+  const handleClose = () => {
+    setSnackbar(false);
   };
 
   useEffect(() => {
@@ -47,6 +53,9 @@ const Register = () => {
     try {
       if (userInfo.success) {
         navigate('/login', { replace: true });
+      } else if (userInfo.error) {
+        setMessage(userInfo.error);
+        setSnackbar(true);
       }
     } catch {}
   }, [userInfo]);
@@ -80,7 +89,7 @@ const Register = () => {
               password: Yup.string().max(255).required('password is required')
             })}
           >
-            {({ errors, handleBlur, isSubmitting, touched }) => (
+            {({ handleBlur, isSubmitting }) => (
               <form onSubmit={handleSubmit}>
                 <Box sx={{ mb: 3 }}>
                   <Typography color="textPrimary" variant="h2">
@@ -106,7 +115,6 @@ const Register = () => {
                   variant="outlined"
                   required
                 />
-
                 <TextField
                   fullWidth
                   label="Password"
@@ -119,7 +127,6 @@ const Register = () => {
                   variant="outlined"
                   required
                 />
-
                 <TextField
                   fullWidth
                   label="Confirm Password"
@@ -132,7 +139,6 @@ const Register = () => {
                   variant="outlined"
                   required
                 />
-
                 <Box sx={{ mt: 2 }}>
                   <FormControl variant="outlined" style={{ minWidth: 550 }}>
                     <InputLabel id="department">Department</InputLabel>
@@ -171,6 +177,15 @@ const Register = () => {
                     Sign in
                   </Link>
                 </Typography>
+                <Snackbar
+                  onClose={handleClose}
+                  open={snackbar}
+                  autoHideDuration={6000}
+                >
+                  <Alert onClose={handleClose} severity="error">
+                    {message}
+                  </Alert>
+                </Snackbar>
               </form>
             )}
           </Formik>

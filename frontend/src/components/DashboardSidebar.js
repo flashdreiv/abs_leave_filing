@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
@@ -22,12 +23,6 @@ import {
   Users as UsersIcon
 } from 'react-feather';
 import NavItem from './NavItem';
-
-const user = {
-  avatar: '/static/images/avatars/avatar_6.png',
-  jobTitle: 'Top Management',
-  name: 'Admin'
-};
 
 const items = [
   {
@@ -79,6 +74,15 @@ const items = [
 
 const DashboardSidebar = ({ onMobileClose, openMobile }) => {
   const location = useLocation();
+  const { userInfo } = useSelector((state) => state.userLogin);
+  const userInformation =
+    typeof userInfo === 'string' ? JSON.parse(userInfo) : userInfo;
+
+  const user = {
+    avatar: '/static/images/avatars/avatar_6.png',
+    jobTitle: userInformation.group,
+    name: userInformation.email
+  };
 
   useEffect(() => {
     if (openMobile && onMobileClose) {

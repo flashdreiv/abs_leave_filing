@@ -39,7 +39,9 @@ class SignUpView(APIView):
                 return Response({"error": "Email already exists"})
             else:
                 if len(password) < 6:
-                    return Response({"error": "Email already exists"})
+                    return Response(
+                        {"error": "Password must be greater than 5 characters"}
+                    )
                 else:
                     user = User.objects.create_user(email=email, password=password)
                     my_group = Group.objects.get(name="Employee")
