@@ -96,9 +96,7 @@ const Login = () => {
                   }}
                 ></Box>
                 <TextField
-                  error={Boolean(touched.email && errors.email)}
                   fullWidth
-                  helperText={touched.email && errors.email}
                   label="Email Address"
                   margin="normal"
                   name="email"
@@ -107,11 +105,10 @@ const Login = () => {
                   type="email"
                   value={email}
                   variant="outlined"
+                  required
                 />
                 <TextField
-                  error={Boolean(touched.password && errors.password)}
                   fullWidth
-                  helperText={touched.password && errors.password}
                   label="Password"
                   margin="normal"
                   name="password"
@@ -120,6 +117,7 @@ const Login = () => {
                   type="password"
                   value={password}
                   variant="outlined"
+                  required
                 />
                 <Box sx={{ py: 2 }}>
                   <Button

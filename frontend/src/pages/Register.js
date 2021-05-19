@@ -95,9 +95,7 @@ const Register = () => {
                   </Typography>
                 </Box>
                 <TextField
-                  error={Boolean(touched.email && errors.email)}
                   fullWidth
-                  helperText={touched.email && errors.email}
                   label="Email Address"
                   margin="normal"
                   name="email"
@@ -106,12 +104,11 @@ const Register = () => {
                   type="email"
                   value={email}
                   variant="outlined"
+                  required
                 />
 
                 <TextField
-                  error={Boolean(touched.password && errors.password)}
                   fullWidth
-                  helperText={touched.password && errors.password}
                   label="Password"
                   margin="normal"
                   name="password"
@@ -120,12 +117,11 @@ const Register = () => {
                   type="password"
                   value={password}
                   variant="outlined"
+                  required
                 />
 
                 <TextField
-                  error={Boolean(touched.password && errors.password)}
                   fullWidth
-                  helperText={touched.password && errors.password}
                   label="Confirm Password"
                   margin="normal"
                   name="password2"
@@ -134,12 +130,14 @@ const Register = () => {
                   type="password"
                   value={password2}
                   variant="outlined"
+                  required
                 />
 
                 <Box sx={{ mt: 2 }}>
                   <FormControl variant="outlined" style={{ minWidth: 550 }}>
-                    <InputLabel id="department">Deparment</InputLabel>
+                    <InputLabel id="department">Department</InputLabel>
                     <Select
+                      required
                       labelId="Department"
                       id="department"
                       onChange={(e) => setDepartment(e.target.value)}
@@ -155,10 +153,6 @@ const Register = () => {
                     </Select>
                   </FormControl>
                 </Box>
-
-                {Boolean(touched.policy && errors.policy) && (
-                  <FormHelperText error>{errors.policy}</FormHelperText>
-                )}
                 <Box sx={{ py: 2 }}>
                   <Button
                     color="primary"

@@ -26,9 +26,6 @@ class LeaveType(models.Model):
         return self.get_leave_type_display()
 
 
-status_choice = (("1", "Pending"), ("2", "Approve"), ("3", "Rejected"))
-
-
 class Filing(models.Model):
     day_type_choice = (("1", "First Half"), ("2", "Second Half"), ("3", "Whole day"))
     user = models.ForeignKey(
@@ -45,7 +42,6 @@ class Filing(models.Model):
         LeaveType, on_delete=models.SET_NULL, null=True, blank=True
     )
     remarks = models.CharField(max_length=300)
-    status = models.CharField(choices=status_choice, max_length=50, default="1")
 
     class Meta:
         unique_together = [["leave_date_from", "user"], ["leave_date_to", "user"]]
@@ -58,21 +54,32 @@ def create_approval(sender, instance, created, **kwargs):
     if created:
         try:
             group = instance.user.groups.all()[0]
-            approver_email = UserAccount.objects.get(
-                groups__name="Human Resource"
-            ).email
-            if group.name != "Employee":
+            if group.name == "Employee":
+                department_head_approver = instance.user.department_set.all()[
+                    0
+                ].department_head
                 Approval.objects.create(
                     filing=instance,
                     level=0,
-                    approver=approver_email,
+                    approver=department_head_approver,
                 )
-
-            else:
+            elif group.name == "Middle Manager":
+                hr_approver = UserAccount.objects.get(
+                    groups__name="Human Resource Manager"
+                ).email
                 Approval.objects.create(
                     filing=instance,
-                    level=0,
-                    approver=instance.user.department_set.all()[0].department_head,
+                    level=1,
+                    approver=hr_approver,
+                )
+            elif group.name == "Human Resource Manager":
+                top_management_approver = UserAccount.objects.get(
+                    groups__name="Top Management"
+                ).email
+                Approval.objects.create(
+                    filing=instance,
+                    level=2,
+                    approver=top_management_approver,
                 )
         except:
             pass

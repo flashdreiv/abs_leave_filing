@@ -3,8 +3,11 @@ from .models import Filing, LeaveType
 
 
 class FilingAdmin(admin.ModelAdmin):
-    list_display = ["user", "leave_type", "day_type", "status"]
-    list_editable = ("status",)
+    list_display = [
+        "user",
+        "leave_type",
+        "day_type",
+    ]
 
 
 class LeaveTypeAdmin(admin.ModelAdmin):

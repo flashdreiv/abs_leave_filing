@@ -11,6 +11,6 @@ urlpatterns = [
     path("", ListFilingView.as_view(), name="list-filing"),
     path("add", AddFilingView.as_view(), name="add-filing"),
     path("delete/<int:pk>", DeleteFilingView.as_view(), name="delete-filing"),
-    path("update/<int:pk>", UpdateFilingView.as_view(), name="list-filing"),
+    path("update/<int:pk>", UpdateFilingView.as_view(), name="update-filing"),
     path("leaves/", LeaveTypeView.as_view(), name="list-leave-types"),
 ]
