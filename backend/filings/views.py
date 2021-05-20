@@ -53,7 +53,6 @@ class AddFilingView(APIView):
 
         try:
             for leave, leaveString in enumerate(LeaveType.leave_type_choices):
-                print(user)
                 if leaveString[1] == leave_type:
                     leave_type = leaveString[0]
                 else:
@@ -71,12 +70,13 @@ class AddFilingView(APIView):
                 return Response(
                     {"error": "You don't have sufficient leave credits for that type"}
                 )
-
             leave_type.save()
             return Response({"success": "Leave filing creation created"})
         except BaseException as e:
-            print(e)
-            return Response({"error": "Failed creating leave filing"})
+
+            return Response(
+                {"error": "Failed creating leave filing, overlapping date existed"}
+            )
 
 
 class DeleteFilingView(APIView):

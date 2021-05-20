@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
-  Avatar,
   Box,
   Card,
   Table,
@@ -17,12 +16,15 @@ import {
   Tooltip,
   Chip
 } from '@material-ui/core';
-import getInitials from 'src/utils/getInitials';
+
+import FormDialog from '../FormDialog';
 
 const FilingListResults = ({ filings, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
+
+  const [modal, setModal] = useState();
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
@@ -72,42 +74,43 @@ const FilingListResults = ({ filings, ...rest }) => {
   };
 
   return (
-    <Card {...rest}>
-      <PerfectScrollbar>
-        <Box sx={{ minWidth: 1050 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Leave Type</TableCell>
-                <TableCell>Day Type</TableCell>
-                <TableCell sortDirection="desc">
-                  <Tooltip enterDelay={300} title="Sort">
-                    <TableSortLabel active direction="desc">
-                      Start Date
-                    </TableSortLabel>
-                  </Tooltip>
-                </TableCell>
-                <TableCell sortDirection="desc">
-                  <Tooltip enterDelay={300} title="Sort">
-                    <TableSortLabel active direction="desc">
-                      End Date
-                    </TableSortLabel>
-                  </Tooltip>
-                </TableCell>
-                <TableCell>Remarks</TableCell>
-                <TableCell>Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filings.slice(0, limit).map((filing) => (
-                <TableRow
-                  hover
-                  key={filing.id}
-                  selected={selectedCustomerIds.indexOf(filing.id) !== -1}
-                >
-                  {/* <TableCell>
+    <>
+      <Card {...rest}>
+        <PerfectScrollbar>
+          <Box sx={{ minWidth: 1050 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Leave Type</TableCell>
+                  <TableCell>Day Type</TableCell>
+                  <TableCell sortDirection="desc">
+                    <Tooltip enterDelay={300} title="Sort">
+                      <TableSortLabel active direction="desc">
+                        Start Date
+                      </TableSortLabel>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell sortDirection="desc">
+                    <Tooltip enterDelay={300} title="Sort">
+                      <TableSortLabel active direction="desc">
+                        End Date
+                      </TableSortLabel>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell>Remarks</TableCell>
+                  <TableCell>Status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filings.slice(0, limit).map((filing) => (
+                  <TableRow
+                    hover
+                    key={filing.id}
+                    selected={selectedCustomerIds.indexOf(filing.id) !== -1}
+                  >
+                    {/* <TableCell>
                     <Box
                       sx={{
                         alignItems: 'center',
@@ -122,37 +125,43 @@ const FilingListResults = ({ filings, ...rest }) => {
                       </Typography>
                     </Box>
                   </TableCell> */}
-                  <TableCell>{filing.id}</TableCell>
-                  <TableCell>{filing.user}</TableCell>
-                  <TableCell>{filing.leave_type}</TableCell>
-                  <TableCell>{filing.day_type}</TableCell>
-                  <TableCell>
-                    {moment(filing.leave_date_from).format('DD/MM/YYYY')}
-                  </TableCell>
-                  <TableCell>
-                    {moment(filing.leave_date_to).format('DD/MM/YYYY')}
-                  </TableCell>
-                  <TableCell>{filing.remarks}</TableCell>
-                  <TableCell>
-                    {' '}
-                    <Chip color="primary" label={filing.status} size="small" />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Box>
-      </PerfectScrollbar>
-      <TablePagination
-        component="div"
-        count={filings.length}
-        onPageChange={handlePageChange}
-        onRowsPerPageChange={handleLimitChange}
-        page={page}
-        rowsPerPage={limit}
-        rowsPerPageOptions={[5, 10, 25]}
-      />
-    </Card>
+                    <TableCell>{filing.id}</TableCell>
+                    <TableCell>{filing.user}</TableCell>
+                    <TableCell>{filing.leave_type}</TableCell>
+                    <TableCell>{filing.day_type}</TableCell>
+                    <TableCell>
+                      {moment(filing.leave_date_from).format('DD/MM/YYYY')}
+                    </TableCell>
+                    <TableCell>
+                      {moment(filing.leave_date_to).format('DD/MM/YYYY')}
+                    </TableCell>
+                    <TableCell>{filing.remarks}</TableCell>
+                    <TableCell>
+                      {' '}
+                      <Chip
+                        color="primary"
+                        label={filing.status}
+                        size="small"
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
+        </PerfectScrollbar>
+        <TablePagination
+          component="div"
+          count={filings.length}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleLimitChange}
+          page={page}
+          rowsPerPage={limit}
+          rowsPerPageOptions={[5, 10, 25]}
+        />
+      </Card>
+      <FormDialog />
+    </>
   );
 };
 
