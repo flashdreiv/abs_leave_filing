@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -24,7 +25,7 @@ const FilingListResults = ({ filings, ...rest }) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
 
-  const [modal, setModal] = useState();
+  const { filingInfo } = useSelector((state) => state.leaveFile);
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
@@ -110,21 +111,6 @@ const FilingListResults = ({ filings, ...rest }) => {
                     key={filing.id}
                     selected={selectedCustomerIds.indexOf(filing.id) !== -1}
                   >
-                    {/* <TableCell>
-                    <Box
-                      sx={{
-                        alignItems: 'center',
-                        display: 'flex'
-                      }}
-                    >
-                      <Avatar src={filing.avatarUrl} sx={{ mr: 2 }}>
-                        {getInitials(filing.name)}
-                      </Avatar>
-                      <Typography color="textPrimary" variant="body1">
-                        {filing.user}
-                      </Typography>
-                    </Box>
-                  </TableCell> */}
                     <TableCell>{filing.id}</TableCell>
                     <TableCell>{filing.user}</TableCell>
                     <TableCell>{filing.leave_type}</TableCell>
@@ -160,6 +146,7 @@ const FilingListResults = ({ filings, ...rest }) => {
           rowsPerPageOptions={[5, 10, 25]}
         />
       </Card>
+
       <FormDialog />
     </>
   );

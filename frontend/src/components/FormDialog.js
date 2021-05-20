@@ -16,21 +16,19 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem,
-  Snackbar,
-  Alert
+  MenuItem
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DatePicker from '@material-ui/lab/DatePicker';
 import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import { format } from 'date-fns';
+import SnackBar from './SnackBar';
 
 export default function FormDialog() {
   const [dialog, setDialog] = React.useState(false);
   let today = format(new Date(), 'yyyy-MM-dd');
   const [leaveTypes, setLeaveTypes] = useState([]);
-  const [snackbar, setSnackbar] = useState(false);
   const { filingInfo } = useSelector((state) => state.leaveFile);
   const [formData, setFormData] = useState({
     leaveType: '',
@@ -47,7 +45,7 @@ export default function FormDialog() {
       setLeaveTypes(data);
     }
     fetchData();
-  }, []);
+  }, [filingInfo]);
 
   const handleClickOpen = () => {
     setDialog(true);
@@ -76,7 +74,6 @@ export default function FormDialog() {
         formData.remarks
       )
     );
-    setSnackbar(true);
   };
 
   return (
@@ -210,32 +207,8 @@ export default function FormDialog() {
                 </DialogActions>
               </FormControl>
             </form>
+            <SnackBar popUp={true} filingInfo={filingInfo} />
           </div>
-          {filingInfo && (
-            <Snackbar
-              open={snackbar}
-              onClose={() => setSnackbar(false)}
-              autoHideDuration={6000}
-            >
-              {filingInfo.hasOwnProperty('success') ? (
-                <Alert
-                  open={snackbar}
-                  onClose={() => setSnackbar(false)}
-                  severity="success"
-                >
-                  {filingInfo.success}
-                </Alert>
-              ) : (
-                <Alert
-                  open={snackbar}
-                  onClose={() => setSnackbar(false)}
-                  severity="error"
-                >
-                  {filingInfo.error}
-                </Alert>
-              )}
-            </Snackbar>
-          )}
         </DialogContent>
       </Dialog>
     </div>
