@@ -21,10 +21,8 @@ class ListFilingView(APIView):
             user = UserAccount.objects.get(pk=int(request.user.id))
             group = request.user.groups.all()[0].name
             queryset = None
-            if user.is_superuser:
-                queryset = Filing.objects.filter(
-                    approval__approver=user.email, status="1"
-                )
+            if group == "Employee":
+                queryset = Filing.objects.filter(user=user)
             elif group == "Middle Manager" or group == "Human Resource":
                 try:
                     # Get all filing from the user and the user being the approver

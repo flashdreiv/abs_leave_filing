@@ -5,7 +5,11 @@ status_choice = (("1", "Pending"), ("2", "Approve"), ("3", "Rejected"))
 # Create your models here.
 class Approval(models.Model):
     filing = models.ForeignKey(
-        "filings.Filing", on_delete=models.CASCADE, null=True, blank=True
+        "filings.Filing",
+        related_name="approval",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
     level = models.SmallIntegerField(default=0)
     approver = models.EmailField(null=True, blank=True)

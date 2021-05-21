@@ -16,6 +16,7 @@ const FilingList = () => {
 
   return (
     <>
+      {console.log(userFilingList)}
       <Helmet>
         <title>Filings</title>
       </Helmet>
