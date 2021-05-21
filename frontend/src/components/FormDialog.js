@@ -40,12 +40,11 @@ export default function FormDialog() {
     remarks: ''
   });
   const dispatch = useDispatch();
-
+  async function fetchData() {
+    const { data } = await axiosActions[0].get('filings/leaves/');
+    setLeaveTypes(data);
+  }
   useEffect(() => {
-    async function fetchData() {
-      const { data } = await axiosActions[0].get('filings/leaves/');
-      setLeaveTypes(data);
-    }
     fetchData();
   }, []);
 
@@ -202,7 +201,7 @@ export default function FormDialog() {
                 />
                 <DialogActions>
                   <Button onClick={handleClose} color="primary">
-                    Cancel
+                    Close
                   </Button>
                   <Button type="submit" color="primary">
                     Save
