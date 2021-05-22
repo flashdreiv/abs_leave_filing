@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 import { useState, useEffect } from 'react';
-=======
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
->>>>>>> dabc46bcf0173a9ffbe2b3d7463b59c9abdc8425
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -23,54 +19,46 @@ import {
 } from '@material-ui/core';
 
 import FormDialog from '../FormDialog';
+import SnackBar from '../SnackBar';
 
-const FilingListResults = ({ filings, ...rest }) => {
-  const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
+const FilingListResults = ({ filings, filingInfo, ...rest }) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [valueToOrderBy, setValueToOrderBy] = useState('startdate');
+  const [selectedRow, setSelectedRow] = useState({});
 
-<<<<<<< HEAD
-=======
-  const { filingInfo } = useSelector((state) => state.leaveFile);
-
->>>>>>> dabc46bcf0173a9ffbe2b3d7463b59c9abdc8425
-  const handleSelectAll = (event) => {
-    let newSelectedCustomerIds;
-
-    if (event.target.checked) {
-      newSelectedCustomerIds = filings.map((filing) => filing.id);
-    } else {
-      newSelectedCustomerIds = [];
-    }
-
-    setSelectedCustomerIds(newSelectedCustomerIds);
+  const [dialog, setDialog] = useState({ open: false, action: 'add' });
+  const createSortHandler = (event, property) => {
+    const isAscending = valueToOrderBy === property && sortDirection === 'asc';
+    setSortDirection(isAscending ? 'desc' : 'asc');
+    setValueToOrderBy(property);
   };
 
-  const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedCustomerIds.indexOf(id);
-    let newSelectedCustomerIds = [];
-
-    if (selectedIndex === -1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds,
-        id
-      );
-    } else if (selectedIndex === 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(1)
-      );
-    } else if (selectedIndex === selectedCustomerIds.length - 1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(0, -1)
-      );
-    } else if (selectedIndex > 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(0, selectedIndex),
-        selectedCustomerIds.slice(selectedIndex + 1)
-      );
+  function descendingComparator(a, b, orderBy) {
+    if (b[orderBy] < a[orderBy]) {
+      return -1;
     }
+    if (b[orderBy] > a[orderBy]) {
+      return 1;
+    }
+    return 0;
+  }
+  function getComparator(order, orderBy) {
+    return order === 'desc'
+      ? (a, b) => descendingComparator(a, b, orderBy)
+      : (a, b) => -descendingComparator(a, b, orderBy);
+  }
 
-    setSelectedCustomerIds(newSelectedCustomerIds);
+  const sortedRowInformation = (rowArray, comparator) => {
+    const stabilizedRowArray = rowArray.map((el, index) => [el, index]);
+    stabilizedRowArray.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+
+    return stabilizedRowArray.map((el) => el[0]);
   };
 
   const handleLimitChange = (event) => {
@@ -81,6 +69,14 @@ const FilingListResults = ({ filings, ...rest }) => {
     setPage(newPage);
   };
 
+  const handleSelectedRow = (filing) => {
+    setSelectedRow(filing);
+    //Check if filing is already approved so you can't edit
+    if (filing.approval[0] === '1') {
+      setDialog({ ...dialog, open: true, action: 'edit' });
+    }
+  };
+
   return (
     <>
       <Card {...rest}>
@@ -89,20 +85,34 @@ const FilingListResults = ({ filings, ...rest }) => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Email</TableCell>
+                  {/* <TableCell>ID</TableCell>
+                  <TableCell>Email</TableCell> */}
                   <TableCell>Leave Type</TableCell>
                   <TableCell>Day Type</TableCell>
-                  <TableCell sortDirection="desc">
+                  <TableCell key="startdate">
                     <Tooltip enterDelay={300} title="Sort">
-                      <TableSortLabel active direction="desc">
+                      <TableSortLabel
+                        onClick={(e) => createSortHandler(e, 'startdate')}
+                        active={valueToOrderBy === 'startdate'}
+                        direction={
+                          valueToOrderBy === 'startdate' ? sortDirection : 'asc'
+                        }
+                      >
                         Start Date
                       </TableSortLabel>
                     </Tooltip>
                   </TableCell>
-                  <TableCell sortDirection="desc">
+                  <TableCell key="enddate">
                     <Tooltip enterDelay={300} title="Sort">
-                      <TableSortLabel active direction="desc">
+                      <TableSortLabel
+                        onClick={(e) => {
+                          createSortHandler(e, 'enddate');
+                        }}
+                        active={valueToOrderBy === 'enddate'}
+                        direction={
+                          valueToOrderBy === 'enddate' ? sortDirection : 'asc'
+                        }
+                      >
                         End Date
                       </TableSortLabel>
                     </Tooltip>
@@ -112,33 +122,45 @@ const FilingListResults = ({ filings, ...rest }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filings.slice(0, limit).map((filing) => (
-                  <TableRow
-                    hover
-                    key={filing.id}
-                    selected={selectedCustomerIds.indexOf(filing.id) !== -1}
-                  >
-                    <TableCell>{filing.id}</TableCell>
-                    <TableCell>{filing.user}</TableCell>
-                    <TableCell>{filing.leave_type}</TableCell>
-                    <TableCell>{filing.day_type}</TableCell>
-                    <TableCell>
-                      {moment(filing.leave_date_from).format('DD/MM/YYYY')}
-                    </TableCell>
-                    <TableCell>
-                      {moment(filing.leave_date_to).format('DD/MM/YYYY')}
-                    </TableCell>
-                    <TableCell>{filing.remarks}</TableCell>
-                    <TableCell>
-                      {' '}
-                      <Chip
-                        color="primary"
-                        label={filing.status}
-                        size="small"
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {sortedRowInformation(
+                  filings,
+                  getComparator(sortDirection, valueToOrderBy)
+                )
+                  .slice(0, limit)
+                  .map((filing) => {
+                    return (
+                      <TableRow
+                        key={filing.id}
+                        hover
+                        onClick={() => handleSelectedRow(filing)}
+                      >
+                        {/* <TableCell>{filing.id}</TableCell>
+                  <TableCell>{filing.user}</TableCell> */}
+                        <TableCell>{filing.leave_type}</TableCell>
+                        <TableCell>{filing.day_type}</TableCell>
+                        <TableCell>
+                          {moment(filing.leave_date_from).format('MM/DD/YYYY')}
+                        </TableCell>
+                        <TableCell>
+                          {moment(filing.leave_date_to).format('MM/DD/YYYY')}
+                        </TableCell>
+                        <TableCell>{filing.remarks}</TableCell>
+                        <TableCell>
+                          <Tooltip enterDelay={300} title="Approver">
+                            <Chip
+                              color="primary"
+                              label={
+                                filing.approval[0] === '3'
+                                  ? 'Approved'
+                                  : 'Pending'
+                              }
+                              size="small"
+                            />
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
               </TableBody>
             </Table>
           </Box>
@@ -153,8 +175,8 @@ const FilingListResults = ({ filings, ...rest }) => {
           rowsPerPageOptions={[5, 10, 25]}
         />
       </Card>
-
-      <FormDialog />
+      <SnackBar filingInfo={filingInfo} />
+      <FormDialog filing={selectedRow} dialog={dialog} setDialog={setDialog} />
     </>
   );
 };

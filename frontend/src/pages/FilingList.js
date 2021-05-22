@@ -8,11 +8,12 @@ import { listLeave } from '../actions/LeaveFilingAction';
 
 const FilingList = () => {
   const { userFilingList } = useSelector((state) => state.listFiling);
+  const { filingInfo } = useSelector((state) => state.leaveFile);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(listLeave());
-  }, []);
+  }, [filingInfo]);
 
   return (
     <>
@@ -30,7 +31,12 @@ const FilingList = () => {
         <Container maxWidth={false}>
           <FilingListToolbar />
           <Box sx={{ pt: 3 }}>
-            {userFilingList && <FilingListResults filings={userFilingList} />}
+            {userFilingList && (
+              <FilingListResults
+                filings={userFilingList}
+                filingInfo={filingInfo}
+              />
+            )}
           </Box>
         </Container>
       </Box>

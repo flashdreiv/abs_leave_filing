@@ -44,6 +44,7 @@ class Filing(models.Model):
     remarks = models.CharField(max_length=300)
 
     class Meta:
+        ordering = ["-leave_date_from"]
         unique_together = [["leave_date_from", "user"], ["leave_date_to", "user"]]
 
     def __str__(self):

@@ -16,7 +16,6 @@ class FilingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Filing
-        ordering = ["approval"]
         fields = [
             "id",
             "user",

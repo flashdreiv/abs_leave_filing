@@ -16,20 +16,18 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  Typography
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DatePicker from '@material-ui/lab/DatePicker';
 import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import { format } from 'date-fns';
-import SnackBar from './SnackBar';
 
-export default function FormDialog() {
-  const [dialog, setDialog] = React.useState(false);
+export default function FormDialog(props) {
   let today = format(new Date(), 'yyyy-MM-dd');
   const [leaveTypes, setLeaveTypes] = useState([]);
-  const { filingInfo } = useSelector((state) => state.leaveFile);
   const [formData, setFormData] = useState({
     leaveType: '',
     dayType: 'Whole day',
@@ -37,21 +35,24 @@ export default function FormDialog() {
     leaveDateTo: today,
     remarks: ''
   });
+
   const dispatch = useDispatch();
+  const { filing, dialog, setDialog } = props;
+
   async function fetchData() {
     const { data } = await axiosActions[0].get('filings/leaves/');
     setLeaveTypes(data);
   }
   useEffect(() => {
     fetchData();
-  }, [filingInfo]);
+  }, []);
 
   const handleClickOpen = () => {
-    setDialog(true);
+    setDialog({ action: 'add', open: true });
   };
 
-  const handleClose = (e) => {
-    setDialog(false);
+  const handleClose = () => {
+    setDialog({ ...dialog, open: false });
   };
   const handleChange = (e) => {
     const value = e.target.value;
@@ -73,6 +74,7 @@ export default function FormDialog() {
         formData.remarks
       )
     );
+    setDialog({ ...dialog, open: false });
   };
 
   return (
@@ -93,122 +95,128 @@ export default function FormDialog() {
       </Fab>
       <Dialog
         name="dialog"
-        open={dialog}
+        open={dialog.open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Add</DialogTitle>
-
-        <DialogContent>
-          <DialogContentText>You can add a filing here</DialogContentText>
-          <div>
-            <form
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-evenly',
-                width: 300
-              }}
-              onSubmit={handleSubmit}
-            >
-              <FormControl>
-                <InputLabel id="leave-type-label">Leave Type</InputLabel>
-                <Select
-                  labelId="leave-type-label"
-                  required
-                  id="leaveType"
-                  name="leaveType"
-                  onChange={handleChange}
-                  value={formData.leaveType}
-                >
+        <DialogTitle id="form-dialog-title">
+          {dialog.action === 'add' ? 'Add' : 'Edit'}
+        </DialogTitle>
+        {dialog.action === 'add' ? (
+          <DialogContent>
+            <DialogContentText>
+              You can {dialog.action} a filing here
+            </DialogContentText>
+            <div>
+              <form
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-evenly',
+                  width: 300
+                }}
+                onSubmit={handleSubmit}
+              >
+                <FormControl>
+                  <InputLabel id="leave-type-label">Leave Type</InputLabel>
+                  <Select
+                    labelId="leave-type-label"
+                    required
+                    id="leaveType"
+                    name="leaveType"
+                    onChange={handleChange}
+                    value={formData.leaveType}
+                  >
+                    {leaveTypes &&
+                      leaveTypes.map((type) => {
+                        return (
+                          <MenuItem key={type.id} value={type.leave_type}>
+                            {type.leave_type}
+                          </MenuItem>
+                        );
+                      })}
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <InputLabel id="day-type-label">Day Type</InputLabel>
+                  <Select
+                    labelId="day-type-label"
+                    required
+                    id="dayType"
+                    name="dayType"
+                    value={formData.dayType}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value={'First Half'}>First Half</MenuItem>
+                    <MenuItem value={'Second Half'}>Second Half</MenuItem>
+                    <MenuItem value={'Whole day'}>Whole Day</MenuItem>
+                  </Select>
                   {leaveTypes &&
                     leaveTypes.map((type) => {
-                      return (
-                        <MenuItem key={type.id} value={type.leave_type}>
-                          {type.leave_type}
-                        </MenuItem>
+                      return type.leave_type === formData.leaveType ? (
+                        <DialogContentText
+                          key={type.id}
+                          style={{ marginTop: 10 }}
+                        >
+                          Leave Credits: {type.leave_credits}
+                        </DialogContentText>
+                      ) : (
+                        ''
                       );
                     })}
-                </Select>
-              </FormControl>
-              <FormControl>
-                <InputLabel id="day-type-label">Day Type</InputLabel>
-                <Select
-                  labelId="day-type-label"
-                  required
-                  id="dayType"
-                  name="dayType"
-                  value={formData.dayType}
-                  onChange={handleChange}
-                >
-                  <MenuItem value={'First Half'}>First Half</MenuItem>
-                  <MenuItem value={'Second Half'}>Second Half</MenuItem>
-                  <MenuItem value={'Whole day'}>Whole Day</MenuItem>
-                </Select>
-                {leaveTypes &&
-                  leaveTypes.map((type) => {
-                    return type.leave_type === formData.leaveType ? (
-                      <DialogContentText
-                        key={type.id}
-                        style={{ marginTop: 10 }}
-                      >
-                        Leave Credits: {type.leave_credits}
-                      </DialogContentText>
-                    ) : (
-                      ''
-                    );
-                  })}
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    label="Start Date"
-                    name="leaveDateFrom"
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      label="Start Date"
+                      name="leaveDateFrom"
+                      required
+                      value={formData.leaveDateFrom}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          leaveDateFrom: format(e, 'yyyy-MM-dd')
+                        })
+                      }
+                      renderInput={(params) => <TextField {...params} />}
+                    />
+                    <DatePicker
+                      label="End Date"
+                      name="leaveDateTo"
+                      required
+                      value={formData.leaveDateTo}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          leaveDateTo: format(e, 'yyyy-MM-dd')
+                        })
+                      }
+                      renderInput={(params) => <TextField {...params} />}
+                    />
+                  </LocalizationProvider>
+                  <TextField
+                    id="standard-textarea"
+                    label="Remarks"
+                    placeholder="Remarks"
+                    name="remarks"
+                    multiline
                     required
-                    value={formData.leaveDateFrom}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        leaveDateFrom: format(e, 'yyyy-MM-dd')
-                      })
-                    }
-                    renderInput={(params) => <TextField {...params} />}
+                    value={formData.remarks}
+                    onChange={handleChange}
                   />
-                  <DatePicker
-                    label="End Date"
-                    name="leaveDateTo"
-                    required
-                    value={formData.leaveDateTo}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        leaveDateTo: format(e, 'yyyy-MM-dd')
-                      })
-                    }
-                    renderInput={(params) => <TextField {...params} />}
-                  />
-                </LocalizationProvider>
-                <TextField
-                  id="standard-textarea"
-                  label="Remarks"
-                  placeholder="Remarks"
-                  name="remarks"
-                  multiline
-                  required
-                  value={formData.remarks}
-                  onChange={handleChange}
-                />
-                <DialogActions>
-                  <Button onClick={handleClose} color="primary">
-                    Close
-                  </Button>
-                  <Button type="submit" color="primary">
-                    Save
-                  </Button>
-                </DialogActions>
-              </FormControl>
-            </form>
-            <SnackBar popUp={true} filingInfo={filingInfo} />
-          </div>
-        </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                      Close
+                    </Button>
+                    <Button type="submit" color="primary">
+                      Save
+                    </Button>
+                  </DialogActions>
+                </FormControl>
+              </form>
+            </div>
+          </DialogContent>
+        ) : (
+          'Shit'
+        )}
       </Dialog>
     </div>
   );

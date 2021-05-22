@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-
+import React, { useState, useEffect } from 'react';
 import { Snackbar, Alert } from '@material-ui/core';
 
-const SnackBar = ({ filingInfo }, popUp) => {
-  const [snackbar, setSnackbar] = useState(popUp);
+const SnackBar = ({ filingInfo }) => {
+  const [snackbar, setSnackbar] = useState(false);
   const handleClose = () => {
     setSnackbar(false);
   };
+  useEffect(() => {
+    setSnackbar(true);
+  }, [filingInfo]);
   return (
     <div>
       {filingInfo && (
