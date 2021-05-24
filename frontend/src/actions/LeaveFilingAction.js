@@ -89,10 +89,9 @@ export const editLeave =
         remarks
       };
       const { data } = await axiosActions[0].put(
-        `filings/${leaveID}`,
+        `filings/update/${leaveID}`,
         editInfo
       );
-      console.log(data);
 
       dispatch({
         type: USER_EDIT_FILING_SUCCESS,
