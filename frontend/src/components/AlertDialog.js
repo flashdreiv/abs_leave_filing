@@ -1,17 +1,17 @@
-import React from "react";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import React from 'react';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 export default function AlertDialog({
   DialogText,
   Title,
   BtnText,
   BtnAction,
-  Params,
+  Params
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -25,12 +25,7 @@ export default function AlertDialog({
 
   return (
     <div>
-      <Button
-        size="small"
-        variant="contained"
-        color="primary"
-        onClick={handleClickOpen}
-      >
+      <Button size="medium" color="primary" onClick={handleClickOpen}>
         {BtnText}
       </Button>
       <Dialog

@@ -114,12 +114,14 @@ export const deleteLeave = (id) => async (dispatch) => {
     dispatch({
       type: USER_FILING_REQUEST
     });
-    const { data } = await axiosActions[0].delete(`filings/${id}`);
+    const { data } = await axiosActions[0].delete(`filings/delete/${id}`);
 
     dispatch({
       type: USER_DELETE_FILING,
       payload: data
     });
+
+    console.log(data);
   } catch (error) {
     dispatch({
       type: USER_FILING_FAIL,

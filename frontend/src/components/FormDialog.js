@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { fileLeave, editLeave } from '../actions/LeaveFilingAction';
+import {
+  fileLeave,
+  editLeave,
+  deleteLeave
+} from '../actions/LeaveFilingAction';
 import { useDispatch, useSelector } from 'react-redux';
 import axiosActions from '../axiosApi';
 
@@ -24,6 +28,7 @@ import DatePicker from '@material-ui/lab/DatePicker';
 import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import { format } from 'date-fns';
+import DeleteDialog from '../components/AlertDialog';
 
 export default function FormDialog(props) {
   let today = format(new Date(), 'yyyy-MM-dd');
@@ -84,7 +89,6 @@ export default function FormDialog(props) {
         )
       );
     } else {
-      console.log('edit');
       dispatch(
         editLeave(
           filing.id,
@@ -98,6 +102,10 @@ export default function FormDialog(props) {
     }
 
     setDialog({ ...dialog, open: false });
+  };
+
+  const deleteFiling = (id) => {
+    dispatch(deleteLeave(id));
   };
 
   return (
@@ -228,6 +236,13 @@ export default function FormDialog(props) {
                   <Button onClick={handleClose} color="primary">
                     Close
                   </Button>
+                  <DeleteDialog
+                    Title="Delete"
+                    BtnText="Delete"
+                    DialogText="Are you sure you want to delete?"
+                    Params={filing}
+                    BtnAction={deleteFiling}
+                  />
                   <Button type="submit" color="primary">
                     Save
                   </Button>
