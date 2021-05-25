@@ -13,11 +13,10 @@ const FilingList = () => {
 
   useEffect(() => {
     dispatch(listLeave());
-  }, [filingInfo]);
+  }, [filingInfo, dispatch]);
 
   return (
     <>
-      {console.log(userFilingList)}
       <Helmet>
         <title>Filings</title>
       </Helmet>

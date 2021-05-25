@@ -28,16 +28,17 @@ import { format } from 'date-fns';
 export default function FormDialog(props) {
   let today = format(new Date(), 'yyyy-MM-dd');
   const [leaveTypes, setLeaveTypes] = useState([]);
+  const { filing, dialog, setDialog } = props;
+
   const [formData, setFormData] = useState({
-    leaveType: '',
-    dayType: 'Whole day',
-    leaveDateFrom: today,
-    leaveDateTo: today,
-    remarks: ''
+    leaveType: filing.leave_type,
+    dayType: filing.day_type,
+    leaveDateFrom: filing.leave_date_from,
+    leaveDateTo: filing.leave_date_to,
+    remarks: filing.remarks
   });
 
   const dispatch = useDispatch();
-  const { filing, dialog, setDialog } = props;
 
   async function fetchData() {
     const { data } = await axiosActions[0].get('filings/leaves/');
@@ -45,7 +46,14 @@ export default function FormDialog(props) {
   }
   useEffect(() => {
     fetchData();
-  }, []);
+    setFormData({
+      leaveType: filing.leave_type,
+      dayType: filing.day_type,
+      leaveDateFrom: filing.leave_date_from,
+      leaveDateTo: filing.leave_date_to,
+      remarks: filing.remarks
+    });
+  }, [filing]);
 
   const handleClickOpen = () => {
     setDialog({ action: 'add', open: true });
@@ -65,15 +73,30 @@ export default function FormDialog(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(
-      fileLeave(
-        formData.leaveType,
-        formData.dayType,
-        formData.leaveDateFrom,
-        formData.leaveDateTo,
-        formData.remarks
-      )
-    );
+    if (dialog.action === 'add') {
+      dispatch(
+        fileLeave(
+          formData.leaveType,
+          formData.dayType,
+          formData.leaveDateFrom,
+          formData.leaveDateTo,
+          formData.remarks
+        )
+      );
+    } else {
+      console.log('edit');
+      dispatch(
+        editLeave(
+          filing.id,
+          formData.leaveType,
+          formData.dayType,
+          formData.leaveDateFrom,
+          formData.leaveDateTo,
+          formData.remarks
+        )
+      );
+    }
+
     setDialog({ ...dialog, open: false });
   };
 
@@ -102,121 +125,117 @@ export default function FormDialog(props) {
         <DialogTitle id="form-dialog-title">
           {dialog.action === 'add' ? 'Add' : 'Edit'}
         </DialogTitle>
-        {dialog.action === 'add' ? (
-          <DialogContent>
-            <DialogContentText>
-              You can {dialog.action} a filing here
-            </DialogContentText>
-            <div>
-              <form
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-evenly',
-                  width: 300
-                }}
-                onSubmit={handleSubmit}
-              >
-                <FormControl>
-                  <InputLabel id="leave-type-label">Leave Type</InputLabel>
-                  <Select
-                    labelId="leave-type-label"
-                    required
-                    id="leaveType"
-                    name="leaveType"
-                    onChange={handleChange}
-                    value={formData.leaveType}
-                  >
-                    {leaveTypes &&
-                      leaveTypes.map((type) => {
-                        return (
-                          <MenuItem key={type.id} value={type.leave_type}>
-                            {type.leave_type}
-                          </MenuItem>
-                        );
-                      })}
-                  </Select>
-                </FormControl>
-                <FormControl>
-                  <InputLabel id="day-type-label">Day Type</InputLabel>
-                  <Select
-                    labelId="day-type-label"
-                    required
-                    id="dayType"
-                    name="dayType"
-                    value={formData.dayType}
-                    onChange={handleChange}
-                  >
-                    <MenuItem value={'First Half'}>First Half</MenuItem>
-                    <MenuItem value={'Second Half'}>Second Half</MenuItem>
-                    <MenuItem value={'Whole day'}>Whole Day</MenuItem>
-                  </Select>
+        <DialogContent>
+          <DialogContentText>
+            You can {dialog.action} a filing here
+          </DialogContentText>
+          <div>
+            <form
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-evenly',
+                width: 300
+              }}
+              onSubmit={handleSubmit}
+            >
+              <FormControl>
+                <InputLabel id="leave-type-label">Leave Type</InputLabel>
+                <Select
+                  labelId="leave-type-label"
+                  required
+                  id="leaveType"
+                  name="leaveType"
+                  onChange={handleChange}
+                  value={formData.leaveType}
+                >
                   {leaveTypes &&
                     leaveTypes.map((type) => {
-                      return type.leave_type === formData.leaveType ? (
-                        <DialogContentText
-                          key={type.id}
-                          style={{ marginTop: 10 }}
-                        >
-                          Leave Credits: {type.leave_credits}
-                        </DialogContentText>
-                      ) : (
-                        ''
+                      return (
+                        <MenuItem key={type.id} value={type.leave_type}>
+                          {type.leave_type}
+                        </MenuItem>
                       );
                     })}
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      label="Start Date"
-                      name="leaveDateFrom"
-                      required
-                      value={formData.leaveDateFrom}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          leaveDateFrom: format(e, 'yyyy-MM-dd')
-                        })
-                      }
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                    <DatePicker
-                      label="End Date"
-                      name="leaveDateTo"
-                      required
-                      value={formData.leaveDateTo}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          leaveDateTo: format(e, 'yyyy-MM-dd')
-                        })
-                      }
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
-                  <TextField
-                    id="standard-textarea"
-                    label="Remarks"
-                    placeholder="Remarks"
-                    name="remarks"
-                    multiline
+                </Select>
+              </FormControl>
+              <FormControl>
+                <InputLabel id="day-type-label">Day Type</InputLabel>
+                <Select
+                  labelId="day-type-label"
+                  required
+                  id="dayType"
+                  name="dayType"
+                  value={formData.dayType}
+                  onChange={handleChange}
+                >
+                  <MenuItem value={'First Half'}>First Half</MenuItem>
+                  <MenuItem value={'Second Half'}>Second Half</MenuItem>
+                  <MenuItem value={'Whole day'}>Whole Day</MenuItem>
+                </Select>
+                {leaveTypes &&
+                  leaveTypes.map((type) => {
+                    return type.leave_type === formData.leaveType ? (
+                      <DialogContentText
+                        key={type.id}
+                        style={{ marginTop: 10 }}
+                      >
+                        Leave Credits: {type.leave_credits}
+                      </DialogContentText>
+                    ) : (
+                      ''
+                    );
+                  })}
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label="Start Date"
+                    name="leaveDateFrom"
                     required
-                    value={formData.remarks}
-                    onChange={handleChange}
+                    value={formData.leaveDateFrom}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        leaveDateFrom: format(e, 'yyyy-MM-dd')
+                      })
+                    }
+                    renderInput={(params) => <TextField {...params} />}
                   />
-                  <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                      Close
-                    </Button>
-                    <Button type="submit" color="primary">
-                      Save
-                    </Button>
-                  </DialogActions>
-                </FormControl>
-              </form>
-            </div>
-          </DialogContent>
-        ) : (
-          'Shit'
-        )}
+                  <DatePicker
+                    label="End Date"
+                    name="leaveDateTo"
+                    required
+                    value={formData.leaveDateTo}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        leaveDateTo: format(e, 'yyyy-MM-dd')
+                      })
+                    }
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+                <TextField
+                  id="standard-textarea"
+                  label="Remarks"
+                  placeholder="Remarks"
+                  name="remarks"
+                  multiline
+                  required
+                  value={formData.remarks}
+                  onChange={handleChange}
+                />
+                <DialogActions>
+                  <Button onClick={handleClose} color="primary">
+                    Close
+                  </Button>
+                  <Button type="submit" color="primary">
+                    Save
+                  </Button>
+                </DialogActions>
+              </FormControl>
+            </form>
+          </div>
+        </DialogContent>
       </Dialog>
     </div>
   );
