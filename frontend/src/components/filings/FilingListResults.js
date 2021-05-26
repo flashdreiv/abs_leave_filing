@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -17,9 +17,20 @@ import {
   Tooltip,
   Chip
 } from '@material-ui/core';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
 
 import FormDialog from '../FormDialog';
 import SnackBar from '../SnackBar';
+
+const HtmlTooltip = withStyles((theme) => ({
+  tooltip: {
+    backgroundColor: '#f5f5f9',
+    color: 'rgba(0, 0, 0, 0.87)',
+    maxWidth: 220,
+    fontSize: theme.typography.pxToRem(12),
+    border: '1px solid #dadde9'
+  }
+}))(Tooltip);
 
 const FilingListResults = ({ filings, filingInfo, ...rest }) => {
   const [limit, setLimit] = useState(10);
@@ -72,7 +83,7 @@ const FilingListResults = ({ filings, filingInfo, ...rest }) => {
   const handleSelectedRow = (filing) => {
     setSelectedRow(filing);
     //Check if filing is already approved so you can't edit
-    if (filing.approval[0] === '1') {
+    if (filing.approval[0].status === '1') {
       setDialog({ ...dialog, open: true, action: 'edit' });
     }
   };
@@ -146,17 +157,45 @@ const FilingListResults = ({ filings, filingInfo, ...rest }) => {
                         </TableCell>
                         <TableCell>{filing.remarks}</TableCell>
                         <TableCell>
-                          <Tooltip enterDelay={300} title="Approver">
+                          <HtmlTooltip
+                            title={filing.approval.map((approval) => {
+                              return (
+                                <Fragment>
+                                  <Typography color="inherit">
+                                    <strong>Approval Details</strong>
+                                  </Typography>
+                                  Approver: {approval.approver}
+                                  <br></br>
+                                  Remarks:{' '}
+                                  {approval.remarks
+                                    ? approval.remarks
+                                    : '--------'}
+                                  <br></br>
+                                  Status:{' '}
+                                  {(() => {
+                                    switch (approval.status) {
+                                      case '1':
+                                        return 'Pending';
+                                      case '2':
+                                        return 'Approved';
+                                      case '3':
+                                        return 'Rejected';
+                                    }
+                                  })()}
+                                </Fragment>
+                              );
+                            })}
+                          >
                             <Chip
                               color="primary"
                               label={
-                                filing.approval[0] === '3'
+                                filing.approval[0].status === '3'
                                   ? 'Approved'
                                   : 'Pending'
                               }
                               size="small"
                             />
-                          </Tooltip>
+                          </HtmlTooltip>
                         </TableCell>
                       </TableRow>
                     );

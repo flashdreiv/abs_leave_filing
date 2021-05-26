@@ -31,7 +31,6 @@ import { format } from 'date-fns';
 import DeleteDialog from '../components/AlertDialog';
 
 export default function FormDialog(props) {
-  let today = format(new Date(), 'yyyy-MM-dd');
   const [leaveTypes, setLeaveTypes] = useState([]);
   const { filing, dialog, setDialog } = props;
 
@@ -131,7 +130,7 @@ export default function FormDialog(props) {
         aria-labelledby="form-dialog-title"
       >
         <DialogTitle id="form-dialog-title">
-          {dialog.action === 'add' ? 'Add' : 'Edit'}
+          <Typography>{dialog.action === 'add' ? 'Add' : 'Edit'}</Typography>
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -141,9 +140,9 @@ export default function FormDialog(props) {
             <form
               style={{
                 display: 'flex',
+                width: 300,
                 flexDirection: 'column',
-                justifyContent: 'space-evenly',
-                width: 300
+                justifyContent: 'space-evenly'
               }}
               onSubmit={handleSubmit}
             >
@@ -167,7 +166,7 @@ export default function FormDialog(props) {
                     })}
                 </Select>
               </FormControl>
-              <FormControl>
+              <FormControl style={{ marginTop: 10 }}>
                 <InputLabel id="day-type-label">Day Type</InputLabel>
                 <Select
                   labelId="day-type-label"
@@ -231,18 +230,21 @@ export default function FormDialog(props) {
                   required
                   value={formData.remarks}
                   onChange={handleChange}
+                  style={{ marginTop: 10 }}
                 />
                 <DialogActions>
                   <Button onClick={handleClose} color="primary">
                     Close
                   </Button>
-                  <DeleteDialog
-                    Title="Delete"
-                    BtnText="Delete"
-                    DialogText="Are you sure you want to delete?"
-                    Params={filing}
-                    BtnAction={deleteFiling}
-                  />
+                  {dialog.action !== 'add' ? (
+                    <DeleteDialog
+                      Title="Delete"
+                      BtnText="Delete"
+                      DialogText="Are you sure you want to delete?"
+                      Params={filing}
+                      BtnAction={deleteFiling}
+                    />
+                  ) : null}
                   <Button type="submit" color="primary">
                     Save
                   </Button>

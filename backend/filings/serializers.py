@@ -4,21 +4,24 @@ from .models import Filing, LeaveType
 from approvals.models import Approval
 
 
+class ApprovalListingField(serializers.RelatedField):
+    def to_representation(self, value):
+        return {
+            "status": value.status,
+            "approver": value.approver,
+            "remarks": value.remarks,
+        }
+
+
 class FilingSerializer(serializers.ModelSerializer):
     leave_type = serializers.StringRelatedField()
     day_type = serializers.CharField(source="get_day_type_display")
-    user = serializers.StringRelatedField()
-    approval = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field="status",
-    )
+    approval = ApprovalListingField(read_only=True, many=True)
 
     class Meta:
         model = Filing
         fields = [
             "id",
-            "user",
             "leave_type",
             "day_type",
             "leave_date_from",
