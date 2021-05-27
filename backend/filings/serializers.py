@@ -14,6 +14,7 @@ class ApprovalListingField(serializers.RelatedField):
 
 
 class FilingSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
     leave_type = serializers.StringRelatedField()
     day_type = serializers.CharField(source="get_day_type_display")
     approval = ApprovalListingField(read_only=True, many=True)
@@ -22,6 +23,7 @@ class FilingSerializer(serializers.ModelSerializer):
         model = Filing
         fields = [
             "id",
+            "user",
             "leave_type",
             "day_type",
             "leave_date_from",

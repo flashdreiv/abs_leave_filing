@@ -50,12 +50,7 @@ const Dashboard = () => {
             <LatestProducts sx={{ height: '100%' }} />
           </Grid> */}
             <Grid item lg={12} md={12} xl={12} xs={12}>
-              <LatestFiling
-                userFilingList={userFilingList}
-                userInfo={
-                  typeof userInfo === 'string' ? JSON.parse(userInfo) : userInfo
-                }
-              />
+              <LatestFiling userFilingList={userFilingList} />
             </Grid>
           </Grid>
         </Container>

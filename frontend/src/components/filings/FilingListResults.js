@@ -1,5 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -17,7 +16,7 @@ import {
   Tooltip,
   Chip
 } from '@material-ui/core';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
 import FormDialog from '../FormDialog';
 import SnackBar from '../SnackBar';
