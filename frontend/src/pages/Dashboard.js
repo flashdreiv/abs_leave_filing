@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet';
 import { Box, Container, Grid } from '@material-ui/core';
 import Budget from 'src/components/dashboard//Budget';
 import LatestFiling from 'src/components/dashboard/LatestFiling';
+import ApprovalListTable from 'src/components/ApprovalListTable';
 import LatestProducts from 'src/components/dashboard//LatestProducts';
 import Sales from 'src/components/dashboard//Sales';
 import TasksProgress from 'src/components/dashboard//TasksProgress';
@@ -51,6 +52,9 @@ const Dashboard = () => {
           </Grid> */}
             <Grid item lg={12} md={12} xl={12} xs={12}>
               <LatestFiling userFilingList={userFilingList} />
+            </Grid>
+            <Grid item lg={12} md={12} xl={12} xs={12}>
+              <ApprovalListTable userFilingList={userFilingList} />
             </Grid>
           </Grid>
         </Container>
