@@ -9,7 +9,10 @@ import {
   USER_DELETE_FILING,
   APPROVE_FILING_REQUEST,
   APPROVE_FILING_SUCCESS,
-  APPROVE_FILING_FAIL
+  APPROVE_FILING_FAIL,
+  APPROVAL_LIST_REQUEST,
+  APPROVAL_LIST_SUCCESS,
+  APPROVAL_LIST_FAIL
 } from '../constants/LeaveFilingConstants';
 
 export const LeaveFilingReducer = (state = {}, action) => {
@@ -59,6 +62,22 @@ export const ListFilingReducer = (state = {}, action) => {
       return { loading: false, userFilingList: action.payload };
 
     case USER_FILING_LIST_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const ListApprovalReducer = (state = {}, action) => {
+  switch (action.type) {
+    case APPROVAL_LIST_REQUEST:
+      return { loading: true };
+
+    case APPROVAL_LIST_SUCCESS:
+      return { loading: false, userApprovalList: action.payload };
+
+    case APPROVAL_LIST_FAIL:
       return { loading: false, error: action.payload };
 
     default:

@@ -17,8 +17,11 @@ import moment from 'moment';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import FilingDetailDialog from './FilingDetailDialog';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { listApproval } from '../actions/LeaveFilingAction';
+
 const HtmlTooltip = withStyles((theme) => ({
   tooltip: {
     backgroundColor: '#f5f5f9',
@@ -29,9 +32,15 @@ const HtmlTooltip = withStyles((theme) => ({
   }
 }))(Tooltip);
 
-const LatestFilingTable = (props) => {
-  const { filing, dialog, setDialog, handleRowSelected, userFilingList } =
-    props;
+const ApprovalListTable = (props) => {
+  const { userApprovalList } = useSelector((state) => state.listApproval);
+  const dispatch = useDispatch();
+
+  const handleRowSelected = () => {};
+
+  useEffect(() => {
+    dispatch(listApproval());
+  }, []);
   return (
     <>
       <Card>
@@ -40,6 +49,7 @@ const LatestFilingTable = (props) => {
             <Table>
               <TableHead>
                 <TableRow>
+                  <TableCell>User</TableCell>
                   <TableCell>Leave Type</TableCell>
                   <TableCell>Day Type</TableCell>
                   <TableCell key="startdate">
@@ -57,60 +67,31 @@ const LatestFilingTable = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {userFilingList &&
-                  userFilingList.slice(0, 5).map((filing) => {
+                {userApprovalList &&
+                  userApprovalList.slice(0, 5).map((approval) => {
                     return (
                       <TableRow
-                        key={filing.id}
+                        key={approval.id}
                         hover
-                        onClick={() => handleRowSelected(filing)}
+                        onClick={() => handleRowSelected(approval)}
                       >
-                        <TableCell>{filing.leave_type}</TableCell>
-                        <TableCell>{filing.day_type}</TableCell>
+                        <TableCell>{approval.filing.user}</TableCell>
+                        <TableCell>{approval.filing.leave_type}</TableCell>
+                        <TableCell>{approval.filing.day_type}</TableCell>
                         <TableCell>
-                          {moment(filing.leave_date_from).format('MM/DD/YYYY')}
+                          {moment(approval.leave_date_from).format(
+                            'MM/DD/YYYY'
+                          )}
                         </TableCell>
                         <TableCell>
-                          {moment(filing.leave_date_to).format('MM/DD/YYYY')}
+                          {moment(approval.leave_date_to).format('MM/DD/YYYY')}
                         </TableCell>
-                        <TableCell>{filing.remarks}</TableCell>
+                        <TableCell>{approval.filing.remarks}</TableCell>
                         <TableCell>
-                          <HtmlTooltip
-                            title={filing.approval.map((approval) => {
-                              return (
-                                <Fragment>
-                                  <Typography color="inherit">
-                                    <strong>Approval Details</strong>
-                                  </Typography>
-                                  Approver: {approval.approver}
-                                  <br></br>
-                                  Remarks:{' '}
-                                  {approval.remarks
-                                    ? approval.remarks
-                                    : '--------'}
-                                  <br></br>
-                                  Status:{' '}
-                                  {(() => {
-                                    switch (approval.status) {
-                                      case '1':
-                                        return 'Pending';
-                                      case '2':
-                                        return 'Approved';
-                                      case '3':
-                                        return 'Rejected';
-                                    }
-                                  })()}
-                                </Fragment>
-                              );
-                            })}
-                          >
+                          <HtmlTooltip title={approval.approver[1]}>
                             <Chip
                               color="primary"
-                              label={
-                                filing.approval[0].status === '3'
-                                  ? 'Approved'
-                                  : 'Pending'
-                              }
+                              label={approval.status}
                               size="small"
                             />
                           </HtmlTooltip>
@@ -145,4 +126,4 @@ const LatestFilingTable = (props) => {
   );
 };
 
-export default LatestFilingTable;
+export default ApprovalListTable;

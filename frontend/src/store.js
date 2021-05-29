@@ -5,7 +5,8 @@ import { userLoginReducer, userSignupReducer } from './reducers/userReducers';
 import {
   ListFilingReducer,
   LeaveFilingReducer,
-  ApproveLeaveReducer
+  ApproveLeaveReducer,
+  ListApprovalReducer
 } from './reducers/LeaveFilingReducer';
 
 const reducer = combineReducers({
@@ -14,7 +15,8 @@ const reducer = combineReducers({
   userLogout: userLoginReducer,
   leaveFile: LeaveFilingReducer,
   listFiling: ListFilingReducer,
-  approveLeave: ApproveLeaveReducer
+  approveLeave: ApproveLeaveReducer,
+  listApproval: ListApprovalReducer
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo');

@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet';
-import { Box, Container, Grid } from '@material-ui/core';
+import { Box, Container, Grid, Typography } from '@material-ui/core';
 import Budget from 'src/components/dashboard//Budget';
 import LatestFiling from 'src/components/dashboard/LatestFiling';
 import ApprovalListTable from 'src/components/ApprovalListTable';
@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 
 const Dashboard = () => {
   const { userFilingList } = useSelector((state) => state.listFiling);
+
   const { userInfo } = useSelector((state) => state.userLogin);
 
   return (
@@ -53,8 +54,11 @@ const Dashboard = () => {
             <Grid item lg={12} md={12} xl={12} xs={12}>
               <LatestFiling userFilingList={userFilingList} />
             </Grid>
+            <Grid item lg={3} sm={6} xl={3} xs={12}>
+              <Typography>Approval List</Typography>
+            </Grid>
             <Grid item lg={12} md={12} xl={12} xs={12}>
-              <ApprovalListTable userFilingList={userFilingList} />
+              <ApprovalListTable />
             </Grid>
           </Grid>
         </Container>
