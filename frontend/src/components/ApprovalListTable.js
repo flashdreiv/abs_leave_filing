@@ -21,6 +21,8 @@ import { useState, Fragment, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { listApproval } from '../actions/LeaveFilingAction';
+import ApproveDialog from '../components/FilingDetailDialog';
+import { rest } from 'lodash-es';
 
 const HtmlTooltip = withStyles((theme) => ({
   tooltip: {
@@ -32,15 +34,26 @@ const HtmlTooltip = withStyles((theme) => ({
   }
 }))(Tooltip);
 
-const ApprovalListTable = (props) => {
+const ApprovalListTable = () => {
   const { userApprovalList } = useSelector((state) => state.listApproval);
+
+  const [dialog, setDialog] = useState({
+    open: true,
+    dialogText: 'Do you want to approve this request?',
+    title: 'Approval'
+  });
+  const [approval, setApproval] = useState();
   const dispatch = useDispatch();
 
-  const handleRowSelected = () => {};
+  const handleRowSelected = (approval) => {
+    setApproval(approval);
+    setDialog({ ...dialog, open: true });
+  };
 
   useEffect(() => {
     dispatch(listApproval());
   }, []);
+
   return (
     <>
       <Card>
@@ -69,36 +82,45 @@ const ApprovalListTable = (props) => {
               <TableBody>
                 {userApprovalList &&
                   userApprovalList.slice(0, 5).map((approval) => {
-                    return (
-                      <TableRow
-                        key={approval.id}
-                        hover
-                        onClick={() => handleRowSelected(approval)}
-                      >
-                        <TableCell>{approval.filing.user}</TableCell>
-                        <TableCell>{approval.filing.leave_type}</TableCell>
-                        <TableCell>{approval.filing.day_type}</TableCell>
-                        <TableCell>
-                          {moment(approval.leave_date_from).format(
-                            'MM/DD/YYYY'
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {moment(approval.leave_date_to).format('MM/DD/YYYY')}
-                        </TableCell>
-                        <TableCell>{approval.filing.remarks}</TableCell>
-                        <TableCell>
-                          <HtmlTooltip title={approval.approver[1]}>
-                            <Chip
-                              color="primary"
-                              label={approval.status}
-                              size="small"
-                            />
-                          </HtmlTooltip>
-                        </TableCell>
-                      </TableRow>
-                    );
+                    if (approval.status === 'Pending') {
+                      return (
+                        <TableRow
+                          key={approval.id}
+                          hover
+                          onClick={() => handleRowSelected(approval)}
+                        >
+                          <TableCell>{approval.filing.user}</TableCell>
+                          <TableCell>{approval.filing.leave_type}</TableCell>
+                          <TableCell>{approval.filing.day_type}</TableCell>
+                          <TableCell>
+                            {moment(approval.leave_date_from).format(
+                              'MM/DD/YYYY'
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {moment(approval.leave_date_to).format(
+                              'MM/DD/YYYY'
+                            )}
+                          </TableCell>
+                          <TableCell>{approval.filing.remarks}</TableCell>
+                          <TableCell>
+                            <HtmlTooltip title={approval.approver[1]}>
+                              <Chip
+                                color="primary"
+                                label={approval.status}
+                                size="small"
+                              />
+                            </HtmlTooltip>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    }
                   })}
+                <ApproveDialog
+                  dialog={dialog}
+                  setDialog={setDialog}
+                  approval={approval}
+                />
               </TableBody>
             </Table>
           </Box>

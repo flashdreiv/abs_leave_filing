@@ -48,6 +48,7 @@ export default function FormDialog(props) {
     const { data } = await axiosActions[0].get('filings/leaves/');
     setLeaveTypes(data);
   }
+
   useEffect(() => {
     fetchData();
     setFormData({

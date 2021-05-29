@@ -11,50 +11,47 @@ import TextField from '@material-ui/core/TextField';
 import { approveLeave } from '../actions/LeaveFilingAction';
 import moment from 'moment';
 
-export default function FilingDetailDialog({
-  dialog,
-  setDialog,
-  title,
-  filing
-}) {
+export default function FilingDetailDialog(props) {
   const dispatch = useDispatch();
 
   const [remarks, setRemarks] = useState('');
+  const { dialog, setDialog, approval } = props;
 
-  const handleApprove = () => {
-    dispatch(approveLeave(filing.id, '2', remarks));
-    setDialog(false);
+  const handleApprove = (approval) => {
+    dispatch(approveLeave(approval.id, '2', remarks));
+    setDialog({ ...dialog, open: false });
   };
-  const handleReject = () => {
-    dispatch(approveLeave(filing.id, '3', remarks));
-    setDialog(false);
+  const handleReject = (approval) => {
+    dispatch(approveLeave(approval.id, '3', remarks));
+    setDialog({ ...dialog, open: false });
   };
 
   return (
     <div>
       <Dialog
-        open={dialog}
+        open={dialog.open}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         size="500"
       >
-        <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
-        <DialogContent>
+        <DialogTitle id="alert-dialog-title">{dialog.title}</DialogTitle>
+        {/* <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Requested by: {filing.requestedby}
+            Requested by: {approval.filing.user}
             <br></br>
-            Leave Type: {filing.leave_type}
+            Leave Type: {approval.filing.leave_type}
             <br></br>
-            Day Type: {filing.day_type}
+            Day Type: {approval.filing.day_type}
             <br></br>
             Leave Date From:{' '}
-            {moment(filing.leave_date_from).format('DD/MM/YYYY')}
+            {moment(approval.filing.leave_date_from).format('DD/MM/YYYY')}
             <br></br>
-            Leave Date To: {moment(filing.leave_date_to).format('DD/MM/YYYY')}
+            Leave Date To:{' '}
+            {moment(approval.filing.leave_date_to).format('DD/MM/YYYY')}
             <br></br>
-            Remarks: {filing.remarks}
+            Remarks: {approval.filing.remarks}
             <br></br>
-            Status: {filing.status}
+            Status: {approval.status}
           </DialogContentText>
           <TextField
             autoFocus
@@ -66,7 +63,7 @@ export default function FilingDetailDialog({
             multiline
             onChange={(e) => setRemarks(e.target.value)}
           />
-        </DialogContent>
+        </DialogContent> */}
 
         <DialogActions>
           <Button onClick={() => setDialog(false)} color="primary">
