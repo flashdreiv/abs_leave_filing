@@ -20,7 +20,8 @@ import {
   ShoppingBag as ShoppingBagIcon,
   User as UserIcon,
   UserPlus as UserPlusIcon,
-  Users as UsersIcon
+  Users as UsersIcon,
+  CheckCircle
 } from 'react-feather';
 import NavItem from './NavItem';
 
@@ -34,6 +35,11 @@ const items = [
     href: '/app/filings/',
     icon: UsersIcon,
     title: 'Filings'
+  },
+  {
+    href: '/app/approvals',
+    icon: CheckCircle,
+    title: 'Approvals'
   },
   // {
   //   href: '/app/customers',
@@ -55,6 +61,7 @@ const items = [
     icon: SettingsIcon,
     title: 'Settings'
   }
+
   //   {
   //     href: '/login',
   //     icon: LockIcon,

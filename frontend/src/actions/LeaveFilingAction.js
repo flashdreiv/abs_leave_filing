@@ -59,7 +59,7 @@ export const listLeave = () => async (dispatch) => {
     });
 
     const { data } = await axiosActions[0].get('filings/');
-    localStorage.setItem('filing_list', JSON.stringify(data));
+    // localStorage.setItem('filing_list', JSON.stringify(data));
 
     dispatch({
       type: USER_FILING_LIST_SUCCESS,
@@ -159,16 +159,14 @@ export const listApproval = () => async (dispatch) => {
 };
 
 //Approve Leave
-export const approveLeave = (id, approved, remarks) => async (dispatch) => {
+export const approveLeave = (id, decision, remarks) => async (dispatch) => {
   try {
     dispatch({
       type: APPROVE_FILING_REQUEST
     });
-    const approveInfo = { approved: approved, remarks: remarks };
-    const { data } = await axiosActions[0].post(
-      `filings/approvals/${id}`,
-      approveInfo
-    );
+    const approveInfo = { decision: decision, remarks: remarks };
+
+    const { data } = await axiosActions[0].put(`approvals/${id}`, approveInfo);
 
     dispatch({
       type: APPROVE_FILING_SUCCESS,

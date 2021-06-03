@@ -9,12 +9,18 @@ import TasksProgress from 'src/components/dashboard//TasksProgress';
 import TotalCustomers from 'src/components/dashboard//TotalCustomers';
 import TotalProfit from 'src/components/dashboard//TotalProfit';
 import TrafficByDevice from 'src/components/dashboard//TrafficByDevice';
-import { useSelector } from 'react-redux';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { listApproval } from '../actions/LeaveFilingAction';
 const Dashboard = () => {
   const { userFilingList } = useSelector((state) => state.listFiling);
-
   const { userInfo } = useSelector((state) => state.userLogin);
+  const { userApprovalList } = useSelector((state) => state.listApproval);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(listApproval());
+  }, []);
 
   return (
     <>
@@ -58,7 +64,7 @@ const Dashboard = () => {
               <Typography>Approval List</Typography>
             </Grid>
             <Grid item lg={12} md={12} xl={12} xs={12}>
-              <ApprovalListTable />
+              <ApprovalListTable userApprovalList={userApprovalList} />
             </Grid>
           </Grid>
         </Container>

@@ -82,6 +82,8 @@ class ApproveLeaveByIdView(APIView):
     def put(self, request, pk):
         user = request.user
         remarks = self.request.data["remarks"]
+        decision = self.request.data["decision"]
+        print(decision)
 
         queryset = Approval.objects.get(approver=user, pk=pk, status="1")
         approver_email = UserAccount.objects.get(

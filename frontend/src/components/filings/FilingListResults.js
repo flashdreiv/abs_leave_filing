@@ -144,8 +144,6 @@ const FilingListResults = ({ filings, filingInfo, ...rest }) => {
                         hover
                         onClick={() => handleSelectedRow(filing)}
                       >
-                        {/* <TableCell>{filing.id}</TableCell>
-                  <TableCell>{filing.user}</TableCell> */}
                         <TableCell>{filing.leave_type}</TableCell>
                         <TableCell>{filing.day_type}</TableCell>
                         <TableCell>

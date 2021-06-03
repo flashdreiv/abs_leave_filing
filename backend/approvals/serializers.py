@@ -9,4 +9,4 @@ class ApprovalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Approval
-        fields = ["approver", "status", "remarks", "filing"]
+        fields = ["id", "approver", "status", "remarks", "filing"]

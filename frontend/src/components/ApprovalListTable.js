@@ -20,9 +20,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useState, Fragment, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { listApproval } from '../actions/LeaveFilingAction';
 import ApproveDialog from '../components/FilingDetailDialog';
-import { rest } from 'lodash-es';
 
 const HtmlTooltip = withStyles((theme) => ({
   tooltip: {
@@ -34,25 +32,19 @@ const HtmlTooltip = withStyles((theme) => ({
   }
 }))(Tooltip);
 
-const ApprovalListTable = () => {
-  const { userApprovalList } = useSelector((state) => state.listApproval);
-
+const ApprovalListTable = (props) => {
   const [dialog, setDialog] = useState({
-    open: true,
+    open: false,
     dialogText: 'Do you want to approve this request?',
     title: 'Approval'
   });
   const [approval, setApproval] = useState();
-  const dispatch = useDispatch();
+  const { userApprovalList } = props;
 
   const handleRowSelected = (approval) => {
-    setApproval(approval);
     setDialog({ ...dialog, open: true });
+    setApproval(approval);
   };
-
-  useEffect(() => {
-    dispatch(listApproval());
-  }, []);
 
   return (
     <>
@@ -79,6 +71,7 @@ const ApprovalListTable = () => {
                   <TableCell>Status</TableCell>
                 </TableRow>
               </TableHead>
+
               <TableBody>
                 {userApprovalList &&
                   userApprovalList.slice(0, 5).map((approval) => {
@@ -104,10 +97,42 @@ const ApprovalListTable = () => {
                           </TableCell>
                           <TableCell>{approval.filing.remarks}</TableCell>
                           <TableCell>
-                            <HtmlTooltip title={approval.approver[1]}>
+                            <HtmlTooltip
+                              title={userApprovalList.map((approval) => {
+                                return (
+                                  <Fragment>
+                                    <Typography color="inherit">
+                                      <strong>Approval Details</strong>
+                                    </Typography>
+                                    Approver: {approval.approver}
+                                    <br></br>
+                                    Remarks:{' '}
+                                    {approval.remarks
+                                      ? approval.remarks
+                                      : '--------'}
+                                    <br></br>
+                                    Status:{' '}
+                                    {(() => {
+                                      switch (approval.status) {
+                                        case '1':
+                                          return 'Pending';
+                                        case '2':
+                                          return 'Approved';
+                                        case '3':
+                                          return 'Rejected';
+                                      }
+                                    })()}
+                                  </Fragment>
+                                );
+                              })}
+                            >
                               <Chip
                                 color="primary"
-                                label={approval.status}
+                                label={
+                                  approval.status === '3'
+                                    ? 'Approved'
+                                    : 'Pending'
+                                }
                                 size="small"
                               />
                             </HtmlTooltip>
@@ -131,7 +156,7 @@ const ApprovalListTable = () => {
               p: 2
             }}
           >
-            <Link to="/app/filings">
+            <Link to="/app/approvals">
               <Button
                 color="primary"
                 endIcon={<ArrowRightIcon />}
