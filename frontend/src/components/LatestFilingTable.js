@@ -106,11 +106,17 @@ const LatestFilingTable = (props) => {
                           >
                             <Chip
                               color="primary"
-                              label={
-                                filing.approval[0].status === '3'
-                                  ? 'Approved'
-                                  : 'Pending'
-                              }
+                              label={(() => {
+                                let x = filing.approval.length - 1;
+                                switch (filing.approval[x].status) {
+                                  case '1':
+                                    return 'Pending';
+                                  case '2':
+                                    return 'Approved';
+                                  case '3':
+                                    return 'Rejected';
+                                }
+                              })()}
                               size="small"
                             />
                           </HtmlTooltip>

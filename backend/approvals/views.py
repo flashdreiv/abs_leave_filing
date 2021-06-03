@@ -71,7 +71,7 @@ class ListApprovalView(APIView):
 
     def get(self, request):
         user = request.user
-        queryset = Approval.objects.filter(approver=user.email)
+        queryset = Approval.objects.filter(approver=user.email).order_by("-id")
         approvals = ApprovalSerializer(queryset, many=True)
         return Response(approvals.data)
 
@@ -83,21 +83,26 @@ class ApproveLeaveByIdView(APIView):
         user = request.user
         remarks = self.request.data["remarks"]
         decision = self.request.data["decision"]
-        print(decision)
 
         queryset = Approval.objects.get(approver=user, pk=pk, status="1")
         approver_email = UserAccount.objects.get(
             groups__name="Human Resource Manager"
         ).email
+
+        queryset.status = decision
+        # Check if Rejected
+        if decision == "3":
+            queryset.filing.leave_type.save()
+            queryset.remarks = remarks
+            queryset.save()
+            return Response({"success": "Reject successful"})
         # Check if employee
         if queryset.level == 0:
-            queryset.status = 2
             Approval.objects.create(
                 filing=queryset.filing, approver=approver_email, level=1
             )
         # Check if department head or HR officer
         elif queryset.level == 1:
-            queryset.status = 2
             approver_email = UserAccount.objects.get(
                 groups__name="Top Management"
             ).email
@@ -105,7 +110,6 @@ class ApproveLeaveByIdView(APIView):
                 filing=queryset.filing, approver=approver_email, level=2
             )
         elif queryset.level == 2:
-            queryset.status = 2
             # Decrement user leave  credits
             if queryset.filing.day_type == "3":
                 queryset.filing.leave_type.leave_credits -= 1

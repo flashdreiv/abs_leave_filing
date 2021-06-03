@@ -42,8 +42,10 @@ const ApprovalListTable = (props) => {
   const { userApprovalList } = props;
 
   const handleRowSelected = (approval) => {
-    setDialog({ ...dialog, open: true });
-    setApproval(approval);
+    if (approval.status === 'Pending') {
+      setDialog({ ...dialog, open: true });
+      setApproval(approval);
+    }
   };
 
   return (
@@ -75,71 +77,53 @@ const ApprovalListTable = (props) => {
               <TableBody>
                 {userApprovalList &&
                   userApprovalList.slice(0, 5).map((approval) => {
-                    if (approval.status === 'Pending') {
-                      return (
-                        <TableRow
-                          key={approval.id}
-                          hover
-                          onClick={() => handleRowSelected(approval)}
-                        >
-                          <TableCell>{approval.filing.user}</TableCell>
-                          <TableCell>{approval.filing.leave_type}</TableCell>
-                          <TableCell>{approval.filing.day_type}</TableCell>
-                          <TableCell>
-                            {moment(approval.leave_date_from).format(
-                              'MM/DD/YYYY'
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {moment(approval.leave_date_to).format(
-                              'MM/DD/YYYY'
-                            )}
-                          </TableCell>
-                          <TableCell>{approval.filing.remarks}</TableCell>
-                          <TableCell>
-                            <HtmlTooltip
-                              title={userApprovalList.map((approval) => {
-                                return (
-                                  <Fragment>
-                                    <Typography color="inherit">
-                                      <strong>Approval Details</strong>
-                                    </Typography>
-                                    Approver: {approval.approver}
-                                    <br></br>
-                                    Remarks:{' '}
-                                    {approval.remarks
-                                      ? approval.remarks
-                                      : '--------'}
-                                    <br></br>
-                                    Status:{' '}
-                                    {(() => {
-                                      switch (approval.status) {
-                                        case '1':
-                                          return 'Pending';
-                                        case '2':
-                                          return 'Approved';
-                                        case '3':
-                                          return 'Rejected';
-                                      }
-                                    })()}
-                                  </Fragment>
-                                );
-                              })}
-                            >
-                              <Chip
-                                color="primary"
-                                label={
-                                  approval.status === '3'
-                                    ? 'Approved'
-                                    : 'Pending'
-                                }
-                                size="small"
-                              />
-                            </HtmlTooltip>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    }
+                    return (
+                      <TableRow
+                        key={approval.id}
+                        hover
+                        onClick={() => handleRowSelected(approval)}
+                      >
+                        <TableCell>{approval.filing.user}</TableCell>
+                        <TableCell>{approval.filing.leave_type}</TableCell>
+                        <TableCell>{approval.filing.day_type}</TableCell>
+                        <TableCell>
+                          {moment(approval.leave_date_from).format(
+                            'MM/DD/YYYY'
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {moment(approval.leave_date_to).format('MM/DD/YYYY')}
+                        </TableCell>
+                        <TableCell>{approval.filing.remarks}</TableCell>
+                        <TableCell>
+                          <HtmlTooltip
+                            title={userApprovalList.map((approval) => {
+                              return (
+                                <Fragment>
+                                  <Typography color="inherit">
+                                    <strong>Approval Details</strong>
+                                  </Typography>
+                                  Approver: {approval.approver}
+                                  <br></br>
+                                  Remarks:{' '}
+                                  {approval.remarks
+                                    ? approval.remarks
+                                    : '--------'}
+                                  <br></br>
+                                  Status: {approval.status}
+                                </Fragment>
+                              );
+                            })}
+                          >
+                            <Chip
+                              color="primary"
+                              label={approval.status}
+                              size="small"
+                            />
+                          </HtmlTooltip>
+                        </TableCell>
+                      </TableRow>
+                    );
                   })}
                 <ApproveDialog
                   dialog={dialog}

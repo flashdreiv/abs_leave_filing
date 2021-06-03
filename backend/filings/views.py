@@ -20,18 +20,7 @@ class ListFilingView(APIView):
         try:
             user = UserAccount.objects.get(pk=int(request.user.id))
             group = request.user.groups.all()[0].name
-            # queryset = None
-            # if group == "Employee":
             queryset = Filing.objects.filter(user=user)
-            # elif group == "Middle Manager" or group == "Human Resource":
-            #     try:
-            #         # Get all filing from the user and the user being the approver
-            #         queryset = Filing.objects.filter(
-            #             Q(approval__approver=user.email) | Q(user=user),
-            #             status="1",
-            #         )
-            # except:
-            #     return Response({"error": "No data found"})
             filings = FilingSerializer(queryset, many=True)
         except BaseException as e:
             return Response({"error": e})
