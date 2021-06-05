@@ -97,23 +97,21 @@ const ApprovalListTable = (props) => {
                         <TableCell>{approval.filing.remarks}</TableCell>
                         <TableCell>
                           <HtmlTooltip
-                            title={userApprovalList.map((approval) => {
-                              return (
-                                <Fragment>
-                                  <Typography color="inherit">
-                                    <strong>Approval Details</strong>
-                                  </Typography>
-                                  Approver: {approval.approver}
-                                  <br></br>
-                                  Remarks:{' '}
-                                  {approval.remarks
-                                    ? approval.remarks
-                                    : '--------'}
-                                  <br></br>
-                                  Status: {approval.status}
-                                </Fragment>
-                              );
-                            })}
+                            title={
+                              <Fragment>
+                                <Typography color="inherit">
+                                  <strong>Approval Details</strong>
+                                </Typography>
+                                Approver: {approval.approver}
+                                <br></br>
+                                Remarks:{' '}
+                                {approval.remarks
+                                  ? approval.remarks
+                                  : '--------'}
+                                <br></br>
+                                Status: {approval.status}
+                              </Fragment>
+                            }
                           >
                             <Chip
                               color="primary"

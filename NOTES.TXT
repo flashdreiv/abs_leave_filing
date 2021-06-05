@@ -1,1 +1,6 @@
 Pede mag ADD ng CDN CSS sa index.html ng react
+
+
+Bugs:
+Leave Date From error when today
+Bug on Status details consolidate approvals

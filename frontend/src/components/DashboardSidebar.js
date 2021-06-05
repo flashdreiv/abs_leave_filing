@@ -133,14 +133,26 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
       <Divider />
       <Box sx={{ p: 2 }}>
         <List>
-          {items.map((item) => (
-            <NavItem
-              href={item.href}
-              key={item.title}
-              title={item.title}
-              icon={item.icon}
-            />
-          ))}
+          {items.map((item) => {
+            if (userInformation.group === 'Employee') {
+              return item.title === 'Approvals' ? null : (
+                <NavItem
+                  href={item.href}
+                  key={item.title}
+                  title={item.title}
+                  icon={item.icon}
+                />
+              );
+            }
+            return (
+              <NavItem
+                href={item.href}
+                key={item.title}
+                title={item.title}
+                icon={item.icon}
+              />
+            );
+          })}
         </List>
       </Box>
       <Box sx={{ flexGrow: 1 }} />
